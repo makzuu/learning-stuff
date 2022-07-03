@@ -1,0 +1,2 @@
+- [ ] license
+- [ ] semantic versioning
