@@ -1,67 +1,84 @@
 require('dotenv').config();
-const mongoose = require('mongoose')
 
+// 01.Install and Set Up Mongoose
+const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+// 02.Create a Model
 let personSchema = new mongoose.Schema({
     name: {type: String, required: true, unique: true},
     age: Number,
     favoriteFoods: [String],
 });
 
-let Person = new mongoose.model('Person', personSchema)
+let Person = mongoose.model('Person', personSchema)
 
+// 03.Create and Save a Record of a Model
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+    let person = new Person({name: 'makz', age: 24, favoriteFoods: ['papas fritas', 'atun con pan']})
+    person.save((error, data) => {
+        if (error) {
+            return console.error(error)
+        }
+        done(null, data)
+    })
 };
 
+// 04.Create Many Records with model.create()
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+    Person.create(arrayOfPeople, (error, data) => {
+        if (error) { return console.error(error) }
+        done(null, data)
+    })
 };
 
+// 05.Use model.find() to Search Your Database
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+    Person.find({name: personName}, (error, data) => {
+        if (error) return console.error(error)
+        done(null, data)
+    })
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const findEditThenSave = (personId, done) => {
-  const foodToAdd = "hamburger";
+    const foodToAdd = "hamburger";
 
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const findAndUpdate = (personName, done) => {
-  const ageToSet = 20;
+    const ageToSet = 20;
 
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const removeManyPeople = (done) => {
-  const nameToRemove = "Mary";
+    const nameToRemove = "Mary";
 
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 const queryChain = (done) => {
-  const foodToSearch = "burrito";
+    const foodToSearch = "burrito";
 
-  done(null /*, data*/);
+    done(null /*, data*/);
 };
 
 /** **Well Done !!**
-/* You completed these challenges, let's go celebrate !
- */
+    /* You completed these challenges, let's go celebrate !
+    */
 
 //----- **DO NOT EDIT BELOW THIS LINE** ----------------------------------
 
