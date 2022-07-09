@@ -6,7 +6,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 // 02.Create a Model
 let personSchema = new mongoose.Schema({
-    name: {type: String, required: true, unique: true},
+    name: {type: String, required: true},
     age: Number,
     favoriteFoods: [String],
 });
@@ -40,34 +40,61 @@ const findPeopleByName = (personName, done) => {
     })
 };
 
+// 06.Use model.findOne() to Return a Single Matching Document from Your Database
 const findOneByFood = (food, done) => {
-    done(null /*, data*/);
+    Person.findOne({favoriteFoods: food}, (error, data) => {
+        if (error) return console.error(error)
+        done(null, data);
+    })
 };
 
+// 07.Use model.findById() to Search Your Database By _id
 const findPersonById = (personId, done) => {
-    done(null /*, data*/);
+    Person.findById(personId, (error, data) => {
+        if (error) return console.log(error)
+        done(null, data)
+    })
 };
 
+// 08.Perform Classic Updates by Running Find, Edit, then Save
 const findEditThenSave = (personId, done) => {
     const foodToAdd = "hamburger";
 
-    done(null /*, data*/);
+    findPersonById(personId, (_, data) => {
+        data.favoriteFoods.push(foodToAdd)
+        data.save((error, data) => {
+            if (error) return console.error(error)
+            done(null, data)
+        })
+    })
 };
 
+// 09.Perform New Updates on a Document Using model.findOneAndUpdate()
 const findAndUpdate = (personName, done) => {
     const ageToSet = 20;
 
-    done(null /*, data*/);
+    Person.findOneAndUpdate({name: personName}, {age: ageToSet}, {new: true}, (error, data) => {
+        if (error) return console.error(error)
+        done(null, data)
+    })
 };
 
+// 10.Delete One Document Using model.findByIdAndRemove
 const removeById = (personId, done) => {
-    done(null /*, data*/);
+    Person.findByIdAndRemove(personId, (error, data) => {
+        if (error) return console.error(error)
+        done(null, data)
+    })
 };
 
+// 11.Delete Many Documents with model.remove()
 const removeManyPeople = (done) => {
     const nameToRemove = "Mary";
 
-    done(null /*, data*/);
+    Person.remove({name: nameToRemove}, (error, data) => {
+        if (error) return console.error(error)
+        done(null, data)
+    })
 };
 
 const queryChain = (done) => {
