@@ -44,6 +44,7 @@ app.get('/now', getTime, (req, res) => res.json({'time': req.now}))
 
 // 09.Get Route Parameter Input from the Client
 app.get('/:word/echo', (req, res) => res.json({'echo': req.params.word}))
+// url: /a word/echo = req.params.word = 'a word'
 
 // 11.Use body-parser to Parse POST Requests
 app.use(bodyParser.urlencoded({extended: false}))
@@ -54,5 +55,11 @@ const postName = (req, res) => res.json({'name': `${req.body.first} ${req.body.l
 // 10.Get Query Parameter Input from the Client
 const getName = (req, res) => res.json({'name': `${req.query.first} ${req.query.last}`})
 app.route('/name').get(getName).post(postName)
+// get
+// url: localhost:3000/name/?first=makz&last=mann = req.query.first = 'makz', req.query.last = 'mann'
+// -----
+// post
+// url: localhost:3000/name/
+// cmd: curl -d 'first=makz&last=mann' http://localhost:3000/name/
 
 module.exports = app
