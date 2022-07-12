@@ -40,6 +40,8 @@ app.get("/api/:date", validate, function (req, res) {
     res.json(obj)
 });
 
+app.get('/api', (req, res) => res.json({unix: Date.now(), utc: new Date().toUTCString()}))
+
 
 
 // listen for requests :)
