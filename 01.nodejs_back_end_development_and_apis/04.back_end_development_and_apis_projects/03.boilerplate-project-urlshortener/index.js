@@ -40,22 +40,23 @@ app.post('/api/shorturl', validate, function(req, res) {
         if (err) {
             return console.error(err)
         } 
-        UrlModel.exists({addr: address}, (err, urlData) => {
-            if (err) return console.error(err)
-            if (null === urlData) {
-                UrlModel.create({addr: address, url: url}, (err, urlData) => {
-                    if (err) return console.error(err)
-                    response = {original_url: urlData.url, short_url: urlData.shorturl}
+
+        UrlModel.findOne({addr: address})
+            .exec()
+            .then(urlData => {
+                // save
+                if (!urlData) {
+                    const urlInstance = new UrlModel({addr: address, url})
+                    urlInstance.save()
+                        .then(urlData => {
+                            const response = {original_url: urlData.url, short_url: urlData.shorturl}
+                            res.json(response)
+                        })
+                } else {
+                    const response = {original_url: urlData.url, short_url: urlData.shorturl}
                     res.json(response)
-                })
-            } else {
-                UrlModel.findById(urlData._id, (err, urlData) => {
-                    if (err) return console.error(err)
-                    response = {original_url: urlData.url, short_url: urlData.shorturl}
-                    res.json(response)
-                })
-            }
-        })
+                }
+            })
     })
 });
 
