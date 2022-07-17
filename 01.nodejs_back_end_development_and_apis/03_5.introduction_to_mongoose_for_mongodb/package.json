@@ -1,0 +1,22 @@
+{
+  "name": "Introduction to Mongoose for MongoDB",
+  "version": "1.0.0",
+  "description": "Mongoose is an Object Data Modeling (ODM) library for MongoDB and Node.js. It manages relationships between data, provides schema validation, and is used to translate between objects in code and the representation of those objects in MongoDB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "freeCodeCamp",
+    "Mongoose",
+    "MongoDB"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "mongoose": "^6.4.4",
+    "validator": "^13.7.0"
+  }
+}
