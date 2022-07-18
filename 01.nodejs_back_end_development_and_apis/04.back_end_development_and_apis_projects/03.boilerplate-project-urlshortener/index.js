@@ -4,11 +4,9 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser')
 const dns = require('dns')
-const mongoose = require('mongoose')
 
-const UrlModel = require('./models/Url.js')
-
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true})
+require('./src/database')
+const UrlModel = require('./src/models/Url')
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -23,44 +21,74 @@ app.get('/', function(req, res) {
 
 app.use(bodyParser.urlencoded({extended: false}))
 
+app.use((req, res, next) => {
+    const { method, url } = req
+    let data = req.params.shorturl
+    if (method === 'POST') data = req.body.url
+    const { shorturl } = req.params
+    console.log(shorturl)
+    
+    console.log({method, url, data})
+    next()
+})
+
 const validate = (req, res, next) => {
-    const regexUrl = /^https?:\/\/www\.\w+\.\w{2,3}\/?$/
-    if (!regexUrl.test(req.body.url)) {
-        return res.json({ error: 'invalid url' })
-    }
+    const regexUrl = /https?:\/\/.+/
+    if (!regexUrl.test(req.body.url)) return res.json({ error: 'invalid url' })
     next()
 }
 
 // Your first API endpoint
 app.post('/api/shorturl', validate, function(req, res) {
-    const url = req.body.url
-    const index = url.indexOf('.')
-    const search = url.substring(index + 1)
+    const replaceRegex = /https?:\/\//
+    const { url } = req.body
+    const search = url.replace(/https?:\/\//,'').replace(/\/.*$/,'')
+
     dns.lookup(search, (err, address) => {
         if (err) {
-            return console.error(err)
-        } 
-
+            console.error(err)
+            return res.json(err)
+        }
         UrlModel.findOne({addr: address})
-            .exec()
-            .then(urlData => {
-                // save
-                if (!urlData) {
-                    const urlInstance = new UrlModel({addr: address, url})
-                    urlInstance.save()
-                        .then(urlData => {
-                            const response = {original_url: urlData.url, short_url: urlData.shorturl}
-                            res.json(response)
-                        })
-                } else {
-                    const response = {original_url: urlData.url, short_url: urlData.shorturl}
-                    res.json(response)
-                }
-            })
+        .then(urlData => {
+            // save
+            if (!urlData) {
+                const urlInstance = new UrlModel({addr: address, url})
+                urlInstance.save()
+                    .then(urlData => {
+                        const response = {original_url: urlData.url, short_url: urlData.shorturl}
+                        console.log(response)
+                        res.json(response)
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        res.json({err})
+                    })
+            } else {
+                const response = {original_url: urlData.url, short_url: urlData.shorturl}
+                console.log(response)
+                res.json(response)
+            }
+        })
+        .catch(err => {
+            console.error(err)
+            res.json({err})
+        })
     })
 });
 
-app.get('/api/shorturl/:shorturl', (req, res) => {res.send('<p>in progress</p>')})
+app.get('/api/shorturl/:shorturl', (req, res) => {
+    const { shorturl } = req.params
+    console.log(shorturl)
+    UrlModel.findOne({shorturl})
+    .then(urlData => {
+        res.redirect(urlData.url)
+    })
+    .catch(err => {
+        console.error(err)
+        res.json({error: err})
+    })
+})
 
 app.listen(port, function() {
     console.log(`Listening on port ${port}`);
