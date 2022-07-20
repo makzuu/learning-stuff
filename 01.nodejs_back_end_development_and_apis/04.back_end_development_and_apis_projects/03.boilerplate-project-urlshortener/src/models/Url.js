@@ -6,8 +6,7 @@ const counterSchema = new mongoose.Schema({
 })
 
 const urlSchema = new mongoose.Schema({
-    addr: {type: String, required: true, unique: true},
-    url: {type: String, required: true},
+    url: {type: String, required: true, unique: true},
     shorturl: Number 
 })
 
@@ -15,7 +14,6 @@ urlSchema.pre('save', function(next) {
     const Counter = mongoose.model('Counter', counterSchema)
 
     Counter.findOneAndUpdate({name: 'UrlCounter'}, {$inc: {count: 1}})
-    .exec()
     .then(
         data => {
             if (!data) {
