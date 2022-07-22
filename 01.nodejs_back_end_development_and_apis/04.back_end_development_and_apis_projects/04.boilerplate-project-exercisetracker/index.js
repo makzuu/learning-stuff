@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 require('./src/database')
 const User = require('./src/models/User')
+const Exercise = require('./src/models/Exercise')
 
 // get all users
 app.get('/api/users', (req, res) => {
@@ -64,22 +65,34 @@ app.post('/api/users/:id/exercises', (req, res) => {
     const { description, duration } = req.body
     let { date } = req.body
 
-    console.log({id})
-    console.log({description, duration, date})
-
-    // response =>
-    // {"_id":"62d8a7c51099fe0b9d8f2a56",
-    // "username":"mazk",
-    // "date":"Tue Oct 20 2020",
-    // "duration":30,
-    // "description":"sali a correr"}
-
     if (!id || !description || !duration) return res.status(400).end()
 
+    if (!date) date = new Date()
     date = new Date(date)
 
-
-    res.status(501).end()
+    const exercise = new Exercise({description, duration, date, user: id})
+    exercise.save()
+        .then(exercise => {
+            exercise.populate('user', {username: 1})
+                .then(data => {
+                    const response = {
+                        '_id': data.user.id,
+                        username: data.user.username,
+                        date: data.date.toDateString(),
+                        duration: data.duration,
+                        description: data.description
+                    }
+                    res.json(response)
+                })
+                .catch(err => {
+                    console.error(err)
+                    res.status(500).end()
+                })
+        })
+    .catch(err => {
+        console.error(err)
+        res.status(500).end()
+    })
 })
 
 // get user exercise log
@@ -89,7 +102,57 @@ app.get('/api/users/:id/logs', (req, res) => {
 
     console.log({id})
     console.log({from, to, limit})
-    res.status(501).end()
+
+    if (!id) return res.status(400).end()
+    // buscar todos los logs
+    if (!from || !to || !limit) {
+        Exercise.find({user: id}).populate('user', {username: 1})
+        .then(data => {
+
+            // {
+            //   username: "fcc_test",
+            //   count: 1,
+            //   _id: "5fb5853f734231456ccb3b05",
+            //   log: [{
+            //     description: "test",
+            //     duration: 60,
+            //     date: "Mon Jan 01 1990",
+            //   }]
+            // }
+            const log = {
+                username: '',
+                count: 0,
+                _id: '',
+                log: []
+            }
+
+            const response = data.reduce((acc, el, i) => {
+                if (i === 0) {
+                    return {
+                        username: el.user.username,
+                        count: i+1,
+                        _id: el.id,
+                        log: [{
+                            date: el.date.toDateString(),
+                            duration: el.duration,
+                            description: el.description
+                        }]
+                    }
+                }
+                acc.count = i+1
+                acc.log.push({
+                    date: el.date.toDateString(),
+                    duration: el.duration,
+                    description: el.description
+                })
+                return acc
+            }, {})
+            
+            res.json(response)
+        })
+    } else { // buscar los logos con los filtros from, to, limit
+    }
+
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {

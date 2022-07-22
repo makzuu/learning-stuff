@@ -1,7 +1,10 @@
-const { Schema, model, Types } = require('mongoose')
+const { Schema, model} = require('mongoose')
 
 const exerciseSchema = Schema({
-    user_id = Types.ObjectId(),
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     date: {
         type: Date,
         default: new Date() 
@@ -9,3 +12,5 @@ const exerciseSchema = Schema({
     duration: Number,
     description: String
 })
+
+module.exports = model('Exercise', exerciseSchema)
