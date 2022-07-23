@@ -16,7 +16,6 @@ require('./src/database')
 const User = require('./src/models/User')
 const Exercise = require('./src/models/Exercise')
 
-// get all users
 app.get('/api/users', (req, res) => {
     User.find({})
     .then(users => {
@@ -28,7 +27,6 @@ app.get('/api/users', (req, res) => {
     })
 })
 
-// add a new user
 app.post('/api/users', (req, res) => {
     const { username } = req.body
 
@@ -59,7 +57,6 @@ app.post('/api/users', (req, res) => {
 
 })
 
-// add exercises 
 app.post('/api/users/:id/exercises', (req, res) => {
     const { id } = req.params
     const { description, duration } = req.body
@@ -95,64 +92,49 @@ app.post('/api/users/:id/exercises', (req, res) => {
     })
 })
 
-// get user exercise log
 app.get('/api/users/:id/logs', (req, res) => {
     const { id } = req.params
     const { from, to, limit } = req.query
 
-    console.log({id})
-    console.log({from, to, limit})
+    if (!id) return res.status(400).json({error: 'bad request'})
 
-    if (!id) return res.status(400).end()
-    // buscar todos los logs
-    if (!from || !to || !limit) {
-        Exercise.find({user: id}).populate('user', {username: 1})
+    let filter = {user: id}
+    let options = {}
+    if (!!from && !!to) {
+        filter.date = {$gte: new Date(from), $lte: new Date(to)}
+    }
+     if (!!limit) options.limit = +limit
+
+    Exercise.find(filter, null, options).populate('user', {username: 1})
         .then(data => {
-
-            // {
-            //   username: "fcc_test",
-            //   count: 1,
-            //   _id: "5fb5853f734231456ccb3b05",
-            //   log: [{
-            //     description: "test",
-            //     duration: 60,
-            //     date: "Mon Jan 01 1990",
-            //   }]
-            // }
-            const log = {
-                username: '',
-                count: 0,
-                _id: '',
-                log: []
-            }
-
             const response = data.reduce((acc, el, i) => {
                 if (i === 0) {
-                    return {
-                        username: el.user.username,
-                        count: i+1,
-                        _id: el.id,
-                        log: [{
-                            date: el.date.toDateString(),
-                            duration: el.duration,
-                            description: el.description
-                        }]
-                    }
+                    acc.username = el.user.username
+                    acc.count = i+1
+                    acc._id = el.id
+                    acc.log = [{
+                        description: el.description,
+                        duration: el.duration,
+                        date: el.date.toDateString()
+                    }]
+                    return acc
                 }
                 acc.count = i+1
                 acc.log.push({
-                    date: el.date.toDateString(),
+                    description: el.description,
                     duration: el.duration,
-                    description: el.description
+                    date: el.date.toDateString()
                 })
                 return acc
             }, {})
-            
+
+            console.log(response)
             res.json(response)
         })
-    } else { // buscar los logos con los filtros from, to, limit
-    }
-
+    .catch(err => {
+        console.error(err)
+        res.status(500).json({error: 'internal server error'})
+    })
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {

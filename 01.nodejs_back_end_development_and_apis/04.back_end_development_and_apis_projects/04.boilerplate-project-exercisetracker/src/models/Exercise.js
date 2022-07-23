@@ -3,7 +3,8 @@ const { Schema, model} = require('mongoose')
 const exerciseSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        unique: true
     },
     date: {
         type: Date,
