@@ -99,19 +99,18 @@ app.get('/api/users/:id/logs', (req, res) => {
     if (!id) return res.status(400).json({error: 'bad request'})
 
     let filter = {user: id}
-    let options = {}
-    if (!!from && !!to) {
-        filter.date = {$gte: new Date(from), $lte: new Date(to)}
-    }
-     if (!!limit) options.limit = +limit
+    let options = {sort: {date: -1}}
+
+    if (!!from && !!to) filter.date = {$gte: new Date(from), $lte: new Date(to)}
+    if (!!limit) options.limit = +limit
 
     Exercise.find(filter, null, options).populate('user', {username: 1})
         .then(data => {
             const response = data.reduce((acc, el, i) => {
                 if (i === 0) {
+                    acc._id = el.id
                     acc.username = el.user.username
                     acc.count = i+1
-                    acc._id = el.id
                     acc.log = [{
                         description: el.description,
                         duration: el.duration,
@@ -128,7 +127,6 @@ app.get('/api/users/:id/logs', (req, res) => {
                 return acc
             }, {})
 
-            console.log(response)
             res.json(response)
         })
     .catch(err => {
