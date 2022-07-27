@@ -1,0 +1,14 @@
+note over browser:
+the browser calls the event handler, the event handler creates a new note object,
+calls the redrawNotes function to add a new li element to the ul element with new data, and then
+sends the note to the server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa {content: "new note", date: "2022-07-27T00:14:55.010Z"}
+
+note over server:
+the server validates the data from the request, saves the new note, and
+responds with a 201 http status code
+end note
+
+server-->browser: HTTP STATUS_CODE 201 {message: "note created"}
