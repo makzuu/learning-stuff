@@ -1,0 +1,13 @@
+#!/bin/sh
+
+TOKEN='bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjMwYzMzNTc1YzNlMWM2MzBlNzFlNTc1IiwiaWF0IjoxNjYxODI1Mjc4fQ.zqvL3tJceSIxkyJTp--O6CatufUp5dk_8YjqdJ7dDo0'
+
+curl -X POST -H 'content-type:application/json' -d '{"username":"hellas","password":"12345"}' localhost:3003/api/login
+
+# curl -X POST -H 'content-type:application/json' -H "authorization:$TOKEN" -d '{"title":"testing userExtrator","url":"iusearchbtw"}' localhost:3003/api/blogs
+
+# curl localhost:3003/api/blogs -H "authorization:$TOKEN" | fx .
+
+# ID='63181bef608292a5e369cbfc'
+
+# curl -X DELETE -H "authorization:$TOKEN" "localhost:3003/api/blogs/$ID"
