@@ -1,0 +1,15 @@
+sort1 uses: bubble sort
+
+How do you know?: if the numbers are sorted it always ends faster because it only have to go through
+the numbers 1 time.
+
+sort2 uses: merge sort
+
+How do you know?: if the numbers are not sorted always ends faster meaning that the algorithm is 
+faster.
+
+sort3 uses: selection sort
+
+How do you know?: when the numbers are not sorted ends faster that the bubble sort but when the 
+numbers are sorted, it ends slower than the bubble sort because, though the numbers are sorted the 
+selection sort does'nt know it until it proves that.
