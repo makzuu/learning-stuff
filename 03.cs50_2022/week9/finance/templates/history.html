@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Symbol</th>
+      <th scope="col">Shares</th>
+      <th scope="col">Price</th>
+      <th scope="col">Operation</th>
+      <th scope="col">Transacted</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for i in history %} 
+        <tr>
+            <td>{{ i.symbol }}</td>
+            {% if i.operation == "sell" %}
+            <td>-{{ i.shares }}</td>
+            {% else %}
+            <td>{{ i.shares }}</td>
+            {% endif %}
+            <td>{{ i.price }}</td>
+            <td>{{ i.operation }}</td>
+            <td>{{ i.time }}</td>
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

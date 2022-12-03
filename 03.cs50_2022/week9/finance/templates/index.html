@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Symbol</th>
+      <th scope="col">Name</th>
+      <th scope="col">Shares</th>
+      <th scope="col">Price</th>
+      <th scope="col">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% set total = namespace(t=0) %}
+      {% if info|length > 1 %}
+          {% for i in info[:-1] %} 
+          <tr>
+              <td>{{ i.symbol }}</td>
+              <td>{{ i.name }}</td>
+              <td>{{ i.shares }}</td>
+              <td>{{ i.price | usd }}</td>
+              {% set total.t = total.t + i.shares * i.price %}
+              <td>{{ (i.shares * i.price) | usd }}</td>
+          </tr>
+          {% endfor %}
+      {% endif %}
+  </tbody>
+  <tfoot>
+      {% set cash = info[-1]["cash"] %}
+      {% set total.t = total.t + cash %}
+
+      <tr>
+          <td class="border-0 fw-bold text-end" colspan="4">Cash</td>
+          <td class="border-0 text-end">{{ cash | usd}}</td>
+      </tr>
+      <tr>
+          {% set total = (total) %}
+          <td class="border-0 fw-bold text-end" colspan="4">TOTAL</td>
+          <td class="border-0 text-end">{{ total.t | usd}}</td>
+      </tr>
+  </tfoot>
+</table>
+
+{% endblock %}
