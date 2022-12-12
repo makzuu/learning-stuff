@@ -1,0 +1,45 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    canvas.width = 800
+    canvas.height = 600
+
+    const rect_width = 100
+    const rect_height = 100
+    const center_x = canvas.width / 2
+    const center_rect = rect_width / 2
+
+    const x = center_x - center_rect
+    let y = 0
+
+    let speed = 0
+    const GRAVITY = .2
+
+    c.strokeStyle = '#ccc'
+    
+    function draw() {
+        requestAnimationFrame(draw)
+
+        if (y > canvas.height) y = rect_height * -1
+        else {
+            speed += GRAVITY
+            y += speed
+        }
+
+        c.clearRect(0, 0, canvas.width, canvas.height)
+        c.strokeRect(x, y, rect_width, rect_height)
+    }
+    requestAnimationFrame(draw)
+
+</script>

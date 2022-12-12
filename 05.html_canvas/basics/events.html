@@ -1,0 +1,54 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    canvas.width = 800
+    canvas.height = 600
+
+    const keys = new Set()
+
+    window.addEventListener('keydown', evt => {
+        if (evt.key === 'l')
+            keys.add('right')
+        if (evt.key === 'h')
+            keys.add('left')
+    })
+    window.addEventListener('keyup', evt => {
+        if (evt.key === 'l')
+            keys.delete('right')
+        else if (evt.key === 'h')
+            keys.delete('left')
+    })
+
+    const rect = {
+        x: canvas.width / 2 - 25,
+        y: canvas.height - 51,
+        width: 50,
+        height: 50,
+        speed: 5,
+    }
+
+    c.strokeStyle = '#ccc'
+    
+    function draw() {
+        window.requestAnimationFrame(draw)
+
+        c.clearRect(0, 0, canvas.width, canvas.height)
+        c.strokeRect(rect.x, rect.y, rect.width, rect.height)
+
+        if (keys.has('right')) rect.x += rect.speed
+        else if (keys.has('left')) rect.x -= rect.speed
+    }
+    window.requestAnimationFrame(draw)
+
+</script>

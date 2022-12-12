@@ -1,0 +1,28 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+</head>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    const center_x = canvas.width / 2
+    const center_y = canvas.height / 2
+
+    c.fillStyle = '#ccc'
+    c.font = 'italic 20px Source Code Pro'
+    c.textAlign = 'center'
+
+    c.fillText('hello, world!', center_x, center_y)
+
+</script>

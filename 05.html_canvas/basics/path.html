@@ -1,0 +1,28 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    const center_x = canvas.width / 2
+
+    c.strokeStyle = '#ccc'
+
+    c.beginPath()
+
+    c.moveTo(center_x, 0)
+    c.lineTo(center_x, canvas.height)
+
+    c.closePath()
+
+    c.stroke()
+
+</script>

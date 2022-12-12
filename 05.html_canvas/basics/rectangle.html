@@ -1,0 +1,17 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    c.fillStyle = 'red'
+    c.fillRect(10, 10, 50, 50)
+</script>

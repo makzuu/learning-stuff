@@ -1,0 +1,63 @@
+<style>
+    body { background: #181818; }
+    canvas { border: solid 1px #ccc; }
+</style>
+
+<canvas width='800' height='600'></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+
+    const center = { x: canvas.width / 2, y: canvas.height / 2 }
+    ctx.translate(center.x, center.y)
+
+    class Vector {
+        constructor(x, y) {
+            this.x = x
+            this.y = y
+        }
+
+        static magnitude(v) {
+            return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2))
+        }
+
+        normalize() {
+            const magnitude = Vector.magnitude(this)
+            if (magnitude !== 0) {
+                this.x /= magnitude
+                this.y /= magnitude
+            }
+        }
+
+        scale(scalar) {
+            this.x *= scalar
+            this.y *= scalar
+        }
+    }
+
+    function getRandomInt(min, max) {
+        return Math.round(Math.random() * (max - min + 1) + min)
+    }
+
+    function draw() {
+        window.requestAnimationFrame(draw)
+
+        // todo: get a random vector of a given magnitude
+        // to make a circle instead of a square
+        // const v = new Vector(getRandomInt(-100, 100), getRandomInt(-100, 100))
+
+        // !todo:
+        const v = new Vector(getRandomInt(-100, 100), getRandomInt(-100, 100))
+        v.normalize()
+        v.scale(100)
+
+        ctx.beginPath()
+        ctx.moveTo(0, 0)
+        ctx.lineTo(v.x, v.y)
+        ctx.closePath()
+        ctx.strokeStyle = '#ccc'
+        ctx.stroke()
+    }
+    draw()
+</script>

@@ -1,0 +1,55 @@
+<style>
+    body { background: #181818; }
+    canvas { border: solid 1px #ccc; }
+</style>
+
+<canvas width='800' height='600'></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+
+    const center = { x: canvas.width / 2, y: canvas.height / 2 }
+
+    class Vector {
+        constructor(x, y) {
+            this.x = x
+            this.y = y
+        }
+
+        add(v) {
+            this.x += v.x
+            this.y += v.y
+        }
+    }
+
+    class Circle {
+        constructor(pos, radius) {
+            this.pos = pos
+            this.radius = radius
+        }
+
+        draw() {
+            ctx.beginPath()
+            ctx.arc(this.pos.x, this.pos.y, this.radius, Math.PI * 2, false)
+            ctx.closePath()
+            ctx.fillStyle = '#ccc'
+            ctx.fill()
+        }
+
+        update(v) {
+            this.pos.add(v)
+        }
+    }
+
+    const circle = new Circle(new Vector(center.x, center.y), 50)
+
+    function draw() {
+        window.requestAnimationFrame(draw)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        circle.draw()
+        circle.update(new Vector(1, 0))
+    }
+    draw()
+</script>

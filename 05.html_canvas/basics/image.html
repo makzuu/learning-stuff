@@ -1,0 +1,25 @@
+<style>
+    body {
+        background: #181818;
+    }
+    canvas {
+        border: solid 1px #ccc;
+    }
+</style>
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    const image = new Image()
+    image.src = 'https://placekitten.com/200/139'
+
+    // drawImage(image, dx, dy)
+    // drawImage(image, dx, dy, dWidth, dHeight)
+    // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+
+    image.addEventListener("load", () => {
+        c.drawImage(image, 0, 0)
+    })
+</script>
