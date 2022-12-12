@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('SourceCodePro-VariableFont_wght.ttf')
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    
+    margin: 0;
+    overflow: hidden;
+}
+
+#game {
+    background-color: #181818;
+}
+
+

@@ -1,0 +1,34 @@
+<style> body { background: #181818; }
+    canvas { border: solid 1px #ccc; }
+</style>
+<canvas></canvas>
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    canvas.width = 800
+    canvas.height = 600
+
+    c.translate(canvas.width / 2, canvas.height / 2)
+
+    class Circle {
+        constructor(x, y, radius) {
+            this.x = x
+            this.y = y
+            this.radius = radius
+        }
+
+        draw() {
+            c.beginPath()
+            c.arc(this.x, this.y, this.radius, Math.PI * 2, false)
+            c.closePath()
+            c.strokeStyle = '#ccc'
+            c.stroke()
+        }
+    }
+
+    const circle = new Circle(0, 0, 50)
+
+    circle.draw()
+
+</script>

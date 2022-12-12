@@ -1,0 +1,66 @@
+<style> body { background: #181818; }
+    canvas { border: solid 1px #ccc; }
+</style>
+<canvas></canvas>
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    canvas.width = 800
+    canvas.height = 600
+
+    const centerX = canvas.width / 2
+    const centerY = canvas.height / 2
+
+    class Particle {
+        constructor({ x, y }) {
+            this.x = x
+            this.y = y
+            this.dx = Math.random() * (2 - (-2) + 1) + (-2)
+            this.dy = Math.random() * (2 - (-2) + 1) + (-2)
+            this.radius = Math.random() * (3 - 2 + 1) + 2
+            this.lifeTime = Math.random() * (10 - 5 + 1) + 5
+            this.ticks = 0
+        }
+
+        draw() {
+            c.beginPath()
+            c.arc(this.x, this.y, this.radius, Math.PI * 2, false)
+            c.closePath()
+            c.fillStyle = '#ccc'
+            c.fill()
+        }
+
+        update() {
+            this.x += this.dx
+            this.y += this.dy
+            this.ticks++
+            if (this.ticks % 3 === 0) this.lifeTime--
+        }
+    }
+
+    let particles = []
+
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle({ x: centerX, y: centerY }))
+    }
+
+    function draw() {
+        window.requestAnimationFrame(draw)
+
+        c.clearRect(0, 0, canvas.width, canvas.height)
+
+        const newParticles = []
+        for (p of particles) {
+            p.draw()
+            p.update()
+
+            if (p.lifeTime > 0) {
+                newParticles.push(p)
+            }
+        }
+        particles = newParticles
+    }
+    draw()
+
+</script>
