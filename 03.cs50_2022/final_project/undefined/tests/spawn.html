@@ -25,25 +25,29 @@
         }
     }
 
-    function randomRadian() {
-        return Math.random() * (Math.PI * 2 - Math.PI ) + Math.PI
+    let previousTimestamp
+    let cooldown = 1.0
+    let spawnrate = 1.0
+    let spawnratedecrement = 1.01
+
+
+    function frame(timestamp) {
+
+        if (previousTimestamp === undefined) previousTimestamp = timestamp
+
+        let dt = (timestamp - previousTimestamp) * 0.001
+
+        cooldown -= dt
+        if (cooldown <= 0.0) {
+            new Circle(Math.random() * canvas.width, Math.random() * canvas.height, 25).draw()
+            cooldown = spawnrate
+            spawnrate /= spawnratedecrement
+        }
+
+        previousTimestamp = timestamp
+
+        window.requestAnimationFrame(frame)
     }
-
-    const c1 = new Circle(canvas.width / 2, canvas.height / 2, 50)
-
-    const miniCircles = []
-    for (let i = 0; i < 10; i++) {
-        const radian = randomRadian()
-        const x = Math.cos(radian) * 100 + c1.x
-        const y = Math.sin(radian) * 100 + c1.y
-        miniCircles.push(new Circle(x, y, 5))
-
-        console.log(randomRadian())
-    }
-
-    c1.draw()
-    for (circle of miniCircles) {
-        circle.draw()
-    }
+    window.requestAnimationFrame(frame)
 
 </script>

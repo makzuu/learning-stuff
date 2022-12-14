@@ -6,22 +6,29 @@ resizeCanvas()
 const player = new Player()
 const enemies = []
 let particles = []
-key = ''
+let key = ''
 
-for (let i = 0; i < 10; i++) {
-    const radians = randomAngle()
-    enemies.push(new Enemy({
-        letter: String.fromCharCode(randomNumber(65, 90)),
-        x: Math.cos(radians) * 600 + player.pos.x,
-        y: Math.sin(radians) * 600 + player.pos.y,
-    }))
-}
+let enemy_cooldown = 1
+let enemy_spawnrate = 1
+const enemy_spawnrate_decrement = 1.01
 
+let previousTimestamp
 
-function draw() {
+function draw(timestamp) {
     window.requestAnimationFrame(draw)
-
     c.clearRect(0, 0, canvas.width, canvas.height)
+
+    if (previousTimestamp === undefined) previousTimestamp = timestamp
+
+    const dt = (timestamp - previousTimestamp) * 0.001
+    previousTimestamp = timestamp
+
+    enemy_cooldown -= dt
+    if (enemy_cooldown <= 0) {
+        addEnemy()
+        enemy_cooldown = enemy_spawnrate
+        enemy_spawnrate /= enemy_spawnrate_decrement
+    }
 
     player.draw();
     for (enemy of enemies) {
@@ -36,4 +43,5 @@ function draw() {
     }
     deleteParticles()
 }
+
 window.requestAnimationFrame(draw)

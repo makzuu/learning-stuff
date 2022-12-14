@@ -32,3 +32,11 @@ function deleteParticles() {
     particles = newParticles
 }
 
+function addEnemy() {
+    const radians = randomAngle()
+    enemies.push(new Enemy({
+        letter: String.fromCharCode(randomNumber(65, 90)),
+        x: Math.cos(radians) * 1000 + player.pos.x,
+        y: Math.sin(radians) * 1000 + player.pos.y,
+    }))
+}
