@@ -12,14 +12,19 @@ function randomAngle() {
 }
 
 function deleteEnemies() {
-    const index = enemies.findIndex((e) => key === e.letter)
+    const index = enemies.findIndex((e) => { 
+        if (key.value === e.letter) {
+            key.value = ''
+            return true
+        }
+        return false
+    })
     if (index !== -1) {
         for (let i = 0; i < 50; i++) {
             particles.push(new Particle({ x: enemies[index].pos.x, y: enemies[index].pos.y }))
         }
         enemies.splice(index, 1)
     }
-    key = ''
 }
 
 function deleteParticles() {

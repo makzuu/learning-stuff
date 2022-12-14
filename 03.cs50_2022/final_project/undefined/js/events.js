@@ -3,10 +3,5 @@ window.addEventListener('resize', () => {
 })
 
 window.addEventListener('keydown', evt => {
-    key = evt.key.toUpperCase()
+    key.value = evt.key.toUpperCase()
 })
-
-window.addEventListener('keyup', evt => {
-    key = evt.key.toUpperCase()
-})
-

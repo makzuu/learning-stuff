@@ -6,7 +6,10 @@ resizeCanvas()
 const player = new Player()
 const enemies = []
 let particles = []
-let key = ''
+
+const key = {
+    value: '',
+}
 
 let enemy_cooldown = 1
 let enemy_spawnrate = 1
