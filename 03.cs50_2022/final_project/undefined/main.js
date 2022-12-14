@@ -17,8 +17,8 @@ const enemy_spawnrate_decrement = 1.01
 
 let previousTimestamp
 
-function draw(timestamp) {
-    window.requestAnimationFrame(draw)
+function frame(timestamp) {
+    window.requestAnimationFrame(frame)
     c.clearRect(0, 0, canvas.width, canvas.height)
 
     if (previousTimestamp === undefined) previousTimestamp = timestamp
@@ -47,4 +47,4 @@ function draw(timestamp) {
     deleteParticles()
 }
 
-window.requestAnimationFrame(draw)
+window.requestAnimationFrame(frame)

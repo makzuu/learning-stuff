@@ -90,10 +90,10 @@ class Particle {
     constructor({ x, y }) {
         this.x = x
         this.y = y
-        this.dx = Math.random() * (2 - (-2) + 1) + (-2)
-        this.dy = Math.random() * (2 - (-2) + 1) + (-2)
-        this.radius = Math.random() * (3 - 2 + 1) + 2
-        this.lifeTime = Math.random() * (20 - 10 + 1) + 10
+        this.dx = randomInt(-2, 2)
+        this.dy = randomInt(-2, 2)
+        this.radius = randomInt(2 ,3)
+        this.lifeTime = randomInt(10, 20)
         this.ticks = 0
     }
 

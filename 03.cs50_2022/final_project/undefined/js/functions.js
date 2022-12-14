@@ -3,12 +3,12 @@ function resizeCanvas() {
     canvas.height = window.innerHeight
 }
 
-function randomNumber(max, min) {
+function randomInt(min, max) {
     return Math.random() * (max - min + 1) + min
 }
 
 function randomAngle() {
-    return randomNumber(Math.PI * 2, Math.PI)
+    return randomInt(Math.PI, Math.PI * 2)
 }
 
 function deleteEnemies() {
@@ -40,7 +40,7 @@ function deleteParticles() {
 function addEnemy() {
     const radians = randomAngle()
     enemies.push(new Enemy({
-        letter: String.fromCharCode(randomNumber(65, 90)),
+        letter: String.fromCharCode(randomInt(65, 90)),
         x: Math.cos(radians) * 1000 + player.pos.x,
         y: Math.sin(radians) * 1000 + player.pos.y,
     }))
