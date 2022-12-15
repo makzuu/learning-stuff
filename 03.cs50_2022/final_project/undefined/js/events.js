@@ -3,5 +3,5 @@ window.addEventListener('resize', () => {
 })
 
 window.addEventListener('keydown', evt => {
-    key.value = evt.key.toUpperCase()
+    game.keyPressed = evt.key.toUpperCase()
 })

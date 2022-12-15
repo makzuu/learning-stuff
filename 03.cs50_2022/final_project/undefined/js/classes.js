@@ -1,3 +1,100 @@
+class Game {
+    constructor() {
+        this.player = new Player()
+        this.enemies = []
+        this.particles = []
+        this.state = '' 
+        this.keyPressed = ''
+
+        this.enemyCooldown = 1
+        this.enemySpawnrate = 1
+        this.enemySpawrateDecrement = 1.01
+    }
+
+    draw() {
+        this.player.draw()
+        this.#enemiesDraw()
+        this.#particlesDraw()
+    }
+
+    update(dt) {
+        this.player.update()
+        this.#enemiesUpdate(dt)
+        this.#particlesUpdate()
+    }
+
+    updateState() {
+        if (this.keyPressed === 'ESCAPE') {
+            this.keyPressed = ''
+            if (this.state === GAME_STATE.PAUSE) {
+                this.state = ''
+            } else {
+                this.state = GAME_STATE.PAUSE
+            }
+        }
+    }
+
+    #newEnemy() {
+        const radians = randomAngle()
+        this.enemies.push(new Enemy({
+            letter: String.fromCharCode(randomInt(65, 90)),
+            x: Math.cos(radians) * 1000 + this.player.pos.x,
+            y: Math.sin(radians) * 1000 + this.player.pos.y,
+        }))
+    }
+
+    #createParticles(pos) {
+        for (let i = 0; i < 20; i++) {
+            this.particles.push(new Particle(pos.x, pos.y))
+        }
+    }
+
+    #enemiesUpdate(dt) {
+        const enemies = []
+        for (const e of this.enemies) {
+            if (this.keyPressed === e.letter && e.pos.x > 0 && e.pos.x < canvas.width && e.pos.y > 0 && e.pos.y < canvas.height) {
+                this.keyPressed = ''
+                this.#createParticles({ x: e.pos.x, y: e.pos.y })
+            } else {
+                enemies.push(e)
+                e.seek(this.player.pos)
+            }
+        }
+        this.enemies = enemies
+
+        this.enemyCooldown -= dt
+        if (this.enemyCooldown <= 0) {
+            this.#newEnemy()
+            this.enemyCooldown = this.enemySpawnrate
+            this.enemySpawnrate /= this.enemySpawrateDecrement
+        }
+    }
+
+    #particlesUpdate() {
+        const particles = []
+        for (const p of this.particles) {
+            if (p.lifeTime > 0) {
+                particles.push(p)
+                p.update()
+            }
+        }
+        this.particles = particles
+    }
+
+    #enemiesDraw() {
+        for (const e of this.enemies) {
+            e.draw()
+        }
+    }
+
+    #particlesDraw() {
+        for (const p of this.particles) {
+            p.draw()
+        }
+    }
+
+}
+
 class Player {
     constructor() {
         this.radius = 50
@@ -12,6 +109,10 @@ class Player {
 
         c.fillStyle = this.color
         c.fill()
+    }
+
+    update() {
+        // todo: collision detection
     }
 }
 
@@ -87,7 +188,7 @@ class Vector {
 }
 
 class Particle {
-    constructor({ x, y }) {
+    constructor(x, y) {
         this.x = x
         this.y = y
         this.dx = randomInt(-2, 2)
