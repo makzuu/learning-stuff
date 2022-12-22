@@ -13,7 +13,7 @@ function randomAngle() {
 
 function isAlpha(letter) {
     if (letter.length > 1) return false
-    return letter >= 'A' && letter <= 'z'
+    return letter >= 'A' && letter <= 'Z' || letter >= 'a' && letter <= 'z'
 }
 
 function isInsideCanvas(pos) {

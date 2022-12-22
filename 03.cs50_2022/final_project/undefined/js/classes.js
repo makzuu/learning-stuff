@@ -111,7 +111,12 @@ class Game {
 
     #newEnemy() {
         const radians = randomAngle()
-        const letter = String.fromCharCode(Math.floor(randomInt(65, 122)))
+        let letter
+        if (Math.round(Math.random()) === 0)
+            letter = String.fromCharCode(Math.floor(randomInt(65,90)))
+        else
+            letter = String.fromCharCode(Math.floor(randomInt(97,122)))
+
         this.enemies.push(new Enemy({
             letter,
             x: Math.cos(radians) * 1000 + this.player.pos.x,
