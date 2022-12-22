@@ -8,5 +8,14 @@ function randomInt(min, max) {
 }
 
 function randomAngle() {
-    return randomInt(Math.PI, Math.PI * 2)
+    return randomInt(0, Math.PI * 2)
+}
+
+function isAlpha(letter) {
+    if (letter.length > 1) return false
+    return letter >= 'A' && letter <= 'z'
+}
+
+function isInsideCanvas(pos) {
+    return pos.x > 0 && pos.x < canvas.width && pos.y > 0 && pos.y < canvas.height
 }

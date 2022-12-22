@@ -3,41 +3,117 @@ class Game {
         this.player = new Player()
         this.enemies = []
         this.particles = []
-        this.state = '' 
-        this.keyPressed = ''
-
+        this.state = GAME_STATE.UNDEFINED
         this.enemyCooldown = 1
         this.enemySpawnrate = 1
-        this.enemySpawrateDecrement = 1.01
+        this.enemySpawnrateDecrement = 1.01
+        this.keyPressed = ''
+        this.killedEnemies = 0
+        this.keyStrokes = 0
+        const cfsize = 50
+        const tfsize = 30
+        this.display = new Display({
+            center: {
+                fillStyle: '#ccc',
+                font: `${cfsize}px Source Code Pro`,
+                textAlign: 'center',
+                textBaseline: 'bottom',
+                position: {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                },
+                position2: {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + cfsize,
+                },
+                maxWidth: canvas.width * 0.7,
+            },
+            trc: {
+                fillStyle: '#ccc',
+                font: `${tfsize}px Source Code Pro`,
+                textAlign: 'right',
+                textBaseline: 'bottom',
+                position: {
+                    x: canvas.width,
+                    y: tfsize,
+                },
+            },
+        })
+
     }
 
     draw() {
         this.player.draw()
         this.#enemiesDraw()
         this.#particlesDraw()
+        this.display.draw()
     }
 
     update(dt) {
-        this.player.update()
+        this.player.update(this.enemies)
         this.#enemiesUpdate(dt)
         this.#particlesUpdate()
     }
 
-    updateState() {
-        if (this.keyPressed === 'ESCAPE') {
+    #enemiesUpdate(dt) {
+        if (this.state === GAME_STATE.PLAYING) {
+            const enemies = []
+            for (const e of this.enemies) {
+                if (this.keyPressed === e.letter && isInsideCanvas(e.pos)) {
+                    this.killedEnemies++
+                    this.#createParticles({ x: e.pos.x, y: e.pos.y })
+                    this.keyPressed = ''
+                } else {
+                    enemies.push(e)
+                    e.seek(this.player.pos)
+                }
+            }
             this.keyPressed = ''
-            if (this.state === GAME_STATE.PAUSE) {
-                this.state = ''
-            } else {
-                this.state = GAME_STATE.PAUSE
+            this.enemies = enemies
+
+            this.enemyCooldown -= dt
+            if (this.enemyCooldown <= 0) {
+                this.#newEnemy()
+                this.enemyCooldown = this.enemySpawnrate
+                this.enemySpawnrate /= this.enemySpawnrateDecrement
+            }
+        }
+    }
+
+    #particlesUpdate() {
+        if (this.state === GAME_STATE.PLAYING) {
+            const particles = []
+            for (const p of this.particles) {
+                if (p.lifeTime > 0) {
+                    particles.push(p)
+                    p.update()
+                }
+            }
+            this.particles = particles
+        }
+    }
+
+    #enemiesDraw() {
+        if (this.state !== GAME_STATE.UNDEFINED) {
+            for (const e of this.enemies) {
+                e.draw()
+            }
+        }
+    }
+
+    #particlesDraw() {
+        if (this.state !== GAME_STATE.UNDEFINED) {
+            for (const p of this.particles) {
+                p.draw()
             }
         }
     }
 
     #newEnemy() {
         const radians = randomAngle()
+        const letter = String.fromCharCode(Math.floor(randomInt(65, 122)))
         this.enemies.push(new Enemy({
-            letter: String.fromCharCode(randomInt(65, 90)),
+            letter,
             x: Math.cos(radians) * 1000 + this.player.pos.x,
             y: Math.sin(radians) * 1000 + this.player.pos.y,
         }))
@@ -46,50 +122,6 @@ class Game {
     #createParticles(pos) {
         for (let i = 0; i < 20; i++) {
             this.particles.push(new Particle(pos.x, pos.y))
-        }
-    }
-
-    #enemiesUpdate(dt) {
-        const enemies = []
-        for (const e of this.enemies) {
-            if (this.keyPressed === e.letter && e.pos.x > 0 && e.pos.x < canvas.width && e.pos.y > 0 && e.pos.y < canvas.height) {
-                this.keyPressed = ''
-                this.#createParticles({ x: e.pos.x, y: e.pos.y })
-            } else {
-                enemies.push(e)
-                e.seek(this.player.pos)
-            }
-        }
-        this.enemies = enemies
-
-        this.enemyCooldown -= dt
-        if (this.enemyCooldown <= 0) {
-            this.#newEnemy()
-            this.enemyCooldown = this.enemySpawnrate
-            this.enemySpawnrate /= this.enemySpawrateDecrement
-        }
-    }
-
-    #particlesUpdate() {
-        const particles = []
-        for (const p of this.particles) {
-            if (p.lifeTime > 0) {
-                particles.push(p)
-                p.update()
-            }
-        }
-        this.particles = particles
-    }
-
-    #enemiesDraw() {
-        for (const e of this.enemies) {
-            e.draw()
-        }
-    }
-
-    #particlesDraw() {
-        for (const p of this.particles) {
-            p.draw()
         }
     }
 
@@ -103,16 +135,27 @@ class Player {
     }
 
     draw() {
-        c.beginPath()
-        c.arc(this.pos.x, this.pos.y, this.radius, Math.PI * 2, false)
-        c.closePath()
+        if (game.state !== GAME_STATE.UNDEFINED) {
+            c.beginPath()
+            c.arc(this.pos.x, this.pos.y, this.radius, Math.PI * 2, false)
+            c.closePath()
 
-        c.fillStyle = this.color
-        c.fill()
+            c.fillStyle = this.color
+            c.fill()
+        }
     }
 
-    update() {
-        // todo: collision detection
+    update(enemies) {
+        if (game.state === GAME_STATE.PLAYING) {
+            for (const e of enemies) {
+                const d = Math.sqrt(Math.pow(e.pos.x - this.pos.x, 2) + Math.pow(e.pos.y - this.pos.y, 2))
+                const radiusSum = e.radius + this.radius
+
+                if (d < radiusSum) {
+                    game.state = GAME_STATE.GAMEOVER
+                }
+            }
+        }
     }
 }
 
@@ -126,8 +169,6 @@ class Enemy {
         this.textAlign = 'center'
         this.textBaseline = 'middle'
         this.letter = letter
-        this.dx = 2
-        this.dy = 2
     }
 
     draw() {
@@ -193,7 +234,7 @@ class Particle {
         this.y = y
         this.dx = randomInt(-2, 2)
         this.dy = randomInt(-2, 2)
-        this.radius = randomInt(2 ,3)
+        this.radius = randomInt(2, 5)
         this.lifeTime = randomInt(10, 20)
         this.ticks = 0
     }
@@ -214,3 +255,47 @@ class Particle {
     }
 }
 
+class Display {
+    constructor({ center, trc }) {
+        this.center = center
+        this.trc = trc
+    }
+
+    draw() {
+        switch (game.state) {
+            case GAME_STATE.UNDEFINED:
+                this.#setTextStyle('center')
+                c.fillText('Press \'Space\' to start the game', this.center.position.x, this.center.position.y, this.center.maxWidth)
+                break
+
+            case GAME_STATE.PLAYING:
+                this.#setTextStyle('trc')
+                c.fillText(`score: ${game.killedEnemies}`, this.trc.position.x, this.trc.position.y, this.trc.maxWidth)
+                break
+
+            case GAME_STATE.PAUSE:
+                this.#setTextStyle('center')
+                c.fillText('Pause', this.center.position.x, this.center.position.y, this.center.maxWidth)
+                this.#setTextStyle('trc')
+                c.fillText(`score: ${game.killedEnemies}`, this.trc.position.x, this.trc.position.y, this.trc.maxWidth)
+                break
+
+            case GAME_STATE.GAMEOVER:
+                this.#setTextStyle('center')
+                c.fillText('Game Over', this.center.position.x, this.center.position.y, this.center.maxWidth)
+                c.fillText(`score: ${game.killedEnemies}`, this.center.position2.x, this.center.position2.y, this.center.maxWidth)
+                break
+        }
+    }
+
+    #setTextStyle(which) {
+        let style
+        if (which === 'center') style = this.center
+        else style = this.trc
+
+        c.fillStyle = style.fillStyle
+        c.font = style.font
+        c.textAlign = style.textAlign
+        c.textBaseline = style.Baseline
+    }
+}
