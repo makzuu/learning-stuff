@@ -10,43 +10,13 @@ class Game {
         this.keyPressed = ''
         this.killedEnemies = 0
         this.keyStrokes = 0
-        const cfsize = 50
-        const tfsize = 30
-        this.display = new Display({
-            center: {
-                fillStyle: '#ccc',
-                font: `${cfsize}px Source Code Pro`,
-                textAlign: 'center',
-                textBaseline: 'bottom',
-                position: {
-                    x: 0,
-                    y: 0,
-                },
-                position2: {
-                    x: 0,
-                    y: -canvas.height/2 + cfsize,
-                },
-                maxWidth: canvas.width * 0.7,
-            },
-            trc: {
-                fillStyle: '#ccc',
-                font: `${cfsize}px Source Code Pro`,
-                textAlign: 'center',
-                textBaseline: 'bottom',
-                position: {
-                    x: 0,
-                    y: -canvas.height/2 + cfsize,
-                },
-            },
-        })
-
     }
 
     draw() {
         this.player.draw()
         this.#enemiesDraw()
         this.#particlesDraw()
-        this.display.draw()
+        display()
     }
 
     update(dt) {
@@ -257,50 +227,5 @@ class Particle {
         this.y += this.dy
         this.ticks++
         if (this.ticks % 3 === 0) this.lifeTime--
-    }
-}
-
-class Display {
-    constructor({ center, trc }) {
-        this.center = center
-        this.trc = trc
-    }
-
-    draw() {
-        switch (game.state) {
-            case GAME_STATE.UNDEFINED:
-                this.#setTextStyle('center')
-                c.fillText('Press \'Space\' to start the game', this.center.position.x, this.center.position.y, this.center.maxWidth)
-                break
-
-            case GAME_STATE.PLAYING:
-                this.#setTextStyle('trc')
-                c.fillText(`score: ${game.killedEnemies}`, this.trc.position.x, this.trc.position.y, this.trc.maxWidth)
-                break
-
-            case GAME_STATE.PAUSE:
-                this.#setTextStyle('center')
-                c.fillText('Pause', this.center.position.x, this.center.position.y, this.center.maxWidth)
-                this.#setTextStyle('trc')
-                c.fillText(`score: ${game.killedEnemies}`, this.trc.position.x, this.trc.position.y, this.trc.maxWidth)
-                break
-
-            case GAME_STATE.GAMEOVER:
-                this.#setTextStyle('center')
-                c.fillText('Game Over', this.center.position.x, this.center.position.y, this.center.maxWidth)
-                c.fillText(`score: ${game.killedEnemies}`, this.center.position2.x, this.center.position2.y, this.center.maxWidth)
-                break
-        }
-    }
-
-    #setTextStyle(which) {
-        let style
-        if (which === 'center') style = this.center
-        else style = this.trc
-
-        c.fillStyle = style.fillStyle
-        c.font = style.font
-        c.textAlign = style.textAlign
-        c.textBaseline = style.Baseline
     }
 }
