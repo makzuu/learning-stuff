@@ -1,0 +1,60 @@
+<style>body { background: #181818; } canvas { border: solid 1px #ccc; } </style>
+<canvas width='800' height='600'></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+
+    const center = { x: canvas.width / 2, y: canvas.height / 2 }
+
+    class Circle {
+        constructor(x, y, radius) {
+            this.x = x
+            this.y = y
+            this.radius = radius
+        }
+
+        draw() {
+            ctx.beginPath()
+            ctx.arc(this.x, this.y, this.radius, Math.PI * 2, false)
+            ctx.closePath()
+            ctx.strokeStyle = '#ccc'
+            ctx.stroke()
+        }
+
+        update() {
+            this.x++
+        }
+    }
+
+    const c1 = new Circle(center.x, center.y, 50)
+    const c2 = new Circle(0, center.y, 50)
+
+    function frame() {
+        window.requestAnimationFrame(frame)
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        if (collision(c1, c2)) {
+            c1.draw()
+            c2.draw()
+            ctx.font = '48px Arial'
+            ctx.textAlign = 'center'
+            ctx.fillStyle = '#ccc'
+            ctx.fillText('collision detected!', center.x, center.y)
+        } else {
+            c1.draw()
+            c2.draw()
+            c2.update()
+        }
+    }
+    window.requestAnimationFrame(frame)
+
+    function collision(c1, c2) {
+        const d = Math.sqrt(Math.pow(c1.x - c2.x, 2) + Math.pow(c1.y - c2.y, 2))
+
+        if (d < c1.radius + c2.radius)
+            return true
+    }
+
+</script>

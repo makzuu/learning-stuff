@@ -1,0 +1,111 @@
+<style>body { background: #181818; } canvas { border: solid 1px #ccc; } </style>
+<canvas width='800' height='600'></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+
+    ctx.translate(canvas.width/2, canvas.height/2)
+
+    class Vector {
+        constructor(x, y, z) {
+            this.x = x
+            this.y = y
+            this.z = z
+        }
+
+        draw() {
+            ctx.beginPath()
+            ctx.arc(this.x, this.y, 1, Math.PI * 2, false)
+            ctx.closePath()
+            ctx.fillStyle = 'red'
+            ctx.fill()
+        }
+
+        mMul(m) {
+            const x = this.x * m[0][0] + this.y * m[0][1] + this.z * m[0][2]
+            const y = this.x * m[1][0] + this.y * m[1][1] + this.z * m[1][2]
+            const z = this.x * m[2][0] + this.y * m[2][1] + this.z * m[2][2]
+            this.x = x
+            this.y = y
+            this.z = z
+        }
+    }
+
+    const vectors = [
+        new Vector(-50, 50, -50),
+        new Vector(50, 50, -50),
+        new Vector(50, -50, -50),
+        new Vector(-50, -50, -50),
+
+        new Vector(-50, 50, 50),
+        new Vector(50, 50, 50),
+        new Vector(50, -50, 50),
+        new Vector(-50, -50, 50),
+    ]
+
+    let angleX = 0.01
+    let angleY = 0.02
+    let angleZ = 0.03
+
+    const rx = [
+        [ 1, 0, 0 ],
+        [ 0, Math.cos(angleX), -Math.sin(angleX) ],
+        [ 0, Math.sin(angleX), Math.cos(angleX) ],
+    ]
+
+    const ry = [
+        [ Math.cos(angleY), 0, Math.sin(angleY) ],
+        [ 0, 1, 0 ],
+        [ -Math.sin(angleY), 0, Math.cos(angleY) ],
+    ]
+    
+    const rz = [
+        [ Math.cos(angleZ), -Math.sin(angleZ), 0 ],
+        [ Math.sin(angleZ), Math.cos(angleZ), 0 ],
+        [ 0, 0, 1 ],
+    ]
+
+    function drawLines(l) {
+        ctx.beginPath()
+
+        let i = 0
+        for (; i < 3; i++) {
+            ctx.moveTo(l[i].x, l[i].y)
+            ctx.lineTo(l[i+1].x, l[i+1].y)
+        }
+        ctx.moveTo(l[i].x, l[i].y)
+        ctx.lineTo(l[0].x, l[0].y)
+        
+        for (i++; i < 7; i++) {
+            ctx.moveTo(l[i].x, l[i].y)
+            ctx.lineTo(l[i+1].x, l[i+1].y)
+        }
+        ctx.moveTo(l[i].x, l[i].y)
+        ctx.lineTo(l[4].x, l[4].y)
+
+        for (i = 0; i < 4; i++) {
+            ctx.moveTo(l[i].x, l[i].y)
+            ctx.lineTo(l[i+4].x, l[i+4].y)
+        }
+
+        ctx.closePath()
+        ctx.strokeStyle = 'blue'
+        ctx.lineWidth = 5
+        ctx.lineCap = 'round'
+        ctx.stroke()
+    }
+
+    function frame() {
+        window.requestAnimationFrame(frame)
+        ctx.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height)
+
+        for (const v of vectors) {
+            v.mMul(rx)
+            v.mMul(ry)
+            v.mMul(rz)
+        }
+        drawLines(vectors)
+    }
+    window.requestAnimationFrame(frame)
+</script>
