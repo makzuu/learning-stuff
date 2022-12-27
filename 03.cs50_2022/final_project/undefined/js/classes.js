@@ -19,23 +19,23 @@ class Game {
                 textAlign: 'center',
                 textBaseline: 'bottom',
                 position: {
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
+                    x: 0,
+                    y: 0,
                 },
                 position2: {
-                    x: canvas.width / 2,
-                    y: canvas.height / 2 + cfsize,
+                    x: 0,
+                    y: -canvas.height/2 + cfsize,
                 },
                 maxWidth: canvas.width * 0.7,
             },
             trc: {
                 fillStyle: '#ccc',
-                font: `${tfsize}px Source Code Pro`,
-                textAlign: 'right',
+                font: `${cfsize}px Source Code Pro`,
+                textAlign: 'center',
                 textBaseline: 'bottom',
                 position: {
-                    x: canvas.width,
-                    y: tfsize,
+                    x: 0,
+                    y: -canvas.height/2 + cfsize,
                 },
             },
         })
@@ -113,14 +113,14 @@ class Game {
         const radians = randomAngle()
         let letter
         if (Math.round(Math.random()) === 0)
-            letter = String.fromCharCode(Math.floor(randomInt(65,90)))
+            letter = String.fromCharCode(Math.floor(random(65,90)))
         else
-            letter = String.fromCharCode(Math.floor(randomInt(97,122)))
+            letter = String.fromCharCode(Math.floor(random(97,122)))
 
         this.enemies.push(new Enemy({
             letter,
-            x: Math.cos(radians) * 1000 + this.player.pos.x,
-            y: Math.sin(radians) * 1000 + this.player.pos.y,
+            x: Math.cos(radians) * 1000,
+            y: Math.sin(radians) * 1000,
         }))
     }
 
@@ -134,8 +134,8 @@ class Game {
 
 class Player {
     constructor() {
-        this.radius = 50
-        this.pos = new Vector(canvas.width / 2, canvas.height / 2)
+        this.radius = 80
+        this.pos = new Vector(0, canvas.height/2 - this.radius * 2)
         this.color = 'red'
     }
 
@@ -237,10 +237,10 @@ class Particle {
     constructor(x, y) {
         this.x = x
         this.y = y
-        this.dx = randomInt(-2, 2)
-        this.dy = randomInt(-2, 2)
-        this.radius = randomInt(2, 5)
-        this.lifeTime = randomInt(10, 20)
+        this.dx = random(-2, 2)
+        this.dy = random(-2, 2)
+        this.radius = random(2, 5)
+        this.lifeTime = random(10, 20)
         this.ticks = 0
     }
 

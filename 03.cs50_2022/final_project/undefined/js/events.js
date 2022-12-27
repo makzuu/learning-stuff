@@ -1,7 +1,3 @@
-window.addEventListener('resize', () => {
-    resizeCanvas()
-})
-
 window.addEventListener('keydown', evt => {
     if (isAlpha(evt.key)) {
         game.keyPressed = evt.key

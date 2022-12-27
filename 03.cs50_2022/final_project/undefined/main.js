@@ -3,6 +3,8 @@ const c = canvas.getContext('2d')
 
 resizeCanvas()
 
+c.translate(canvas.width/2, canvas.height/2)
+
 const GAME_STATE = Object.freeze({
     UNDEFINED: 'undefined',
     PAUSE: 'pause',
@@ -15,7 +17,7 @@ let game = new Game()
 let previousTimestamp
 function frame(timestamp) {
     window.requestAnimationFrame(frame)
-    c.clearRect(0, 0, canvas.width, canvas.height)
+    c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height)
 
     if (previousTimestamp === undefined) previousTimestamp = timestamp
 
