@@ -29,6 +29,9 @@ function display() {
     c.fillStyle = '#ccc'
     c.textAlign = 'center'
     c.font = `${fontSize}px Source Code Pro`
+    c.shadowOffsetY = 3
+    c.shadowOffsetY = 3
+    c.shadowColor = '#444'
 
     switch (game.state) {
         case GAME_STATE.UNDEFINED:

@@ -115,6 +115,7 @@ class Player {
             c.arc(this.pos.x, this.pos.y, this.radius, Math.PI * 2, false)
             c.closePath()
 
+            c.shadowColor = '#444'
             c.fillStyle = this.color
             c.fill()
         }
@@ -151,12 +152,14 @@ class Enemy {
         c.arc(this.pos.x, this.pos.y, this.radius, Math.PI * 2, false)
         c.closePath()
         c.fillStyle = this.arcColor
+        c.shadowColor = '#444'
         c.fill()
 
         c.font = `${this.fontSize}px Source Code Pro`
         c.fillStyle = this.textColor
         c.textAlign = this.textAlign
         c.textBaseline = this.textBaseline
+        c.shadowColor = '#ccc'
         c.fillText(this.letter, this.pos.x, this.pos.y) 
     }
 
@@ -219,6 +222,7 @@ class Particle {
         c.arc(this.x, this.y, this.radius, Math.PI * 2, false)
         c.closePath()
         c.fillStyle = '#ccc'
+        c.shadowColor = '#444'
         c.fill()
     }
 
