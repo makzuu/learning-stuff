@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+        <script>
+            // TODO: Add code to check answers to questions
+            window.onload = () => {
+                document.querySelectorAll('button').forEach((button, index) => {
+                    if (index < 3)
+                        button.addEventListener('click', checkOne)
+                    else
+                        button.addEventListener('click', checkTwo)
+                })
+            }
+
+            function checkOne(evt) {
+                const status1 = document.querySelector('#status1')
+                let color = ''
+                switch (evt.target.innerHTML) {
+                    case 'The right one':
+                        status1.innerText = 'Correct!'
+                        color = '#0e0'
+                        break
+                    case 'The left one':
+                        status1.innerText = 'Incorrect'
+                        color = '#e00'
+                        break;
+                    case 'Both':
+                        status1.innerText = 'Incorrect'
+                        color = '#e00'
+                        break
+                }
+                status1.style.color = color
+                event.target.style.background = color
+            }
+
+            function checkTwo(evt) {
+                const status2 = document.querySelector('#status2')
+                const input = document.querySelector('input')
+                if (input.value.toLowerCase() === 'wade wilson') {
+                    status2.style.color = '#0e0'
+                    status2.innerText = 'Correct!'
+                    input.style.background = '#0e0'
+                } else {
+                    status2.style.color = '#e00'
+                    status2.innerText = 'Incorrect'
+                    input.style.background = '#e00'
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <!-- TODO: Add multiple choice question here -->
+                <h3>Which eye does Thor lose?</h3> <!-- The right one -->
+                <p id='status1'></p>
+                <button>The left one</button>
+                <button>The right one</button>
+                <button>Both</button>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr>
+                <!-- TODO: Add free response question here -->
+                <h3>What’s Deadpool's real name?</h3> <!-- wade wilson -->
+                <p id='status2'></p>
+                <input type='text' />
+                <button>Check Answer</button>
+            </div>
+        </div>
+    </body>
+</html>

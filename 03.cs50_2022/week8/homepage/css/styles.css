@@ -1,0 +1,106 @@
+@font-face {
+    font-family: 'Ambitsek';
+    src: url('../fonts/ambitsek/ambitsek.ttf');
+}
+
+@font-face {
+    font-family: 'Hack';
+    src: url('../fonts/hack/Hack_Regular_Nerd_Font_Complete_Mono.ttf');
+}
+
+body { background: #181818; }
+
+.container {
+    width: 70%;
+    margin: auto;
+
+    color: #ccc;
+    text-align: center;
+
+    font-family: 'Hack';
+}
+
+.header h1 {
+    font-family: 'Ambitsek';
+    margin-top: 21px;
+    margin-bottom: 21px;
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.last_name { color: #d84727; }
+
+.label { color: #d84727; }
+
+.main {
+    text-align: justify;
+}
+
+.main ul {
+    list-style-type: none;
+}
+
+.navigation ul {
+    text-decoration: none;
+    padding: 0;
+}
+
+
+.navigation li {
+    display: inline-block;
+}
+
+a {
+    color: #576490;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #BEB7DF;
+}
+
+.music-main, .anime-main, .about-main {
+    text-align: justify;
+}
+
+.box {
+    text-align: left;
+    padding: 16px;
+}
+
+.grid-container {
+    margin: 16px;
+    display: grid;
+    gap: 10px;
+
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.grid-container ul {
+    padding: 0;
+}
+
+.grid-container li {
+    list-style-type: none;
+}
+
+.grid-container img {
+    margin: auto;
+    display: block;
+    width: 90%;
+}
+
+.image-link {
+	transition: .3s ease-in-out;
+}
+
+.image-link:hover {
+	transform: rotate(5deg) scale(1);
+}
+
+.sphere, .cube {
+    margin: auto;
+    text-align: center;
+}
+
