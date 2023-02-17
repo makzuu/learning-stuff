@@ -3,3 +3,7 @@
 // first guess.
 
 // todo
+
+// for(i, 1, 20, (Random value * 10) println)
+
+1.9 proto proto println

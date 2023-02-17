@@ -1,7 +1,5 @@
 // Write the matrix to a file, and read a matrix form a file.
 
-// todo
-
 Matrix := Object clone do(
     init := method(
         self description := "a two-dimensional list"
@@ -34,16 +32,52 @@ Matrix := Object clone do(
 
         new_matrix
     )
+
+    readFromFile := method(fName,
+        f := File with(fName)
+        f openForReading
+        lines := f readLines
+        f close
+
+        self dim(lines at(0) split(" ") size, lines size)
+
+        for (y, 0, lines size-1,
+            line := lines at(y) split(" ")
+            for (x, 0, line size-1,
+                n := line at(x)
+                self set(x, y, n asNumber)
+            )
+        )
+    )
+
+    writeToFile := method(fName,
+        f := File with(fName)
+        f openForUpdating
+
+        self data foreach(i, e,
+            e foreach(j, el,
+                f write(el asString .. " ")
+            )
+            f write("\n")
+        )
+
+        f close
+    )
 )
 
-matrix := Matrix clone
-matrix dim(2, 2)
+matrixIn := Matrix clone
+matrixIn readFromFile("matrix_in.txt")
 
-matrix set(0, 0, 1)
-matrix set(0, 1, 2)
-matrix set(1, 0, 3)
-matrix set(1, 1, 4)
+matrixOut := Matrix clone
 
-matrix toFile("matrix")
+matrixOut dim(2, 2)
 
-matrix2 := Matrix fromFile("matrix")
+matrixOut set(0, 0, 1)
+matrixOut set(0, 1, 2)
+matrixOut set(1, 0, 3)
+matrixOut set(1, 1, 4)
+
+matrixOut writeToFile("matrix_out.txt")
+
+matrixIn data println
+matrixOut data println
