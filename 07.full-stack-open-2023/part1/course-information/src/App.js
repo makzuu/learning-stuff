@@ -1,12 +1,15 @@
 // takes care of rendering the name of the course
 const Header = props => <h1>{props.name}</h1>
 
+// renders the name and number of exercises of one part
+const Part = props => <p>{props.name} {props.number}</p>
+
 // renders the parts and their number of exercises
 const Content = props => (
     <>
-        <p>{props.part1} {props.exercises1}</p>
-        <p>{props.part2} {props.exercises2}</p>
-        <p>{props.part3} {props.exercises3}</p>
+        <Part name={props.part1} number={props.exercises1} />
+        <Part name={props.part2} number={props.exercises2} />
+        <Part name={props.part3} number={props.exercises3} />
     </>
 )
 
