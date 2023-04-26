@@ -25,13 +25,11 @@ const App = () => {
 
 const Statistics = ({ good, neutral, bad }) => {
     const all = good + neutral + bad
-    let average = 0
-    let positive = 0
 
-    if (all !== 0) {
-        average = (good - bad) / all
-        positive = good * 100 / all
-    }
+    if (all === 0) return <p>No feedback given</p>
+
+    const average = (good - bad) / all
+    const positive = good * 100 / all
 
     return (
         <>
