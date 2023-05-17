@@ -20,8 +20,18 @@ const App = () => {
     const handleSubmit = e => {
         e.preventDefault()
 
-        if (persons.find(person => person.name.toLowerCase() === newName.toLowerCase())) {
-            alert(`${newName} is already added to phonebook`)
+        const person = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+        if (person) {
+            const answer = window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)
+            if (answer)
+                personService
+                    .update({ id: person.id, name: newName, number: newNumber })
+                    .then(updatedPerson => {
+                        setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+
+                        setNewName('')
+                        setNewNumber('')
+                    })
             return
         }
 
