@@ -7,3 +7,13 @@
     font-size: 20px;
     margin-bottom: 10px;
 }
+
+.error {
+    color: red;
+    border: red solid 1px;
+    border-radius: 5px;
+    background: lightgrey;
+    padding: 10px;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
