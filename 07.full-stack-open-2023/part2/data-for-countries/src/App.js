@@ -17,12 +17,12 @@ const App = () => {
             find countries
             <input id='country' type='text' onChange={e => setFilter(e.target.value)} value={filter}/>
         </label>
-        <Info countries={countries} country={filter} />
+        <Info countries={countries} country={filter} setCountry={setFilter} />
         </>
     )
 }
 
-const Info = ({ country, countries }) => {
+const Info = ({ country, countries, setCountry }) => {
     if (country.length === 0 || countries.length === 0) return null
 
     const search = country[0].toUpperCase() + country.substring(1)
@@ -33,7 +33,12 @@ const Info = ({ country, countries }) => {
     if (found.length > 1)
         return (
             <ul>
-                { found.map(c => <li key={c.name.common}>{c.name.common}</li>) }
+                { found.map(c =>
+                    <li key={c.name.common}>
+                        {c.name.common}
+                        <button onClick={() => setCountry(c.name.common)}>show</button>
+                    </li>) 
+                }
             </ul>
         )
     if (found.length === 1) {
