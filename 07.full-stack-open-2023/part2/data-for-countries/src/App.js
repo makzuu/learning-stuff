@@ -11,59 +11,106 @@ const App = () => {
             .then(response => setCountries(response.data))
     }, [])
 
+    const found = countries.filter(c => 
+        c.name.common.toLowerCase().startsWith(filter.toLowerCase())
+    )
+
+    if (filter.length === 0 || countries.length === 0)
+        return <Form input={filter} setInput={setFilter}/>
+
+    if (found.length > 10)
+        return (
+            <>
+                <Form input={filter} setInput={setFilter}/>
+                <p>Too many matches, specify another filter</p>
+            </>
+        )
+
+    if (found.length > 1)
+        return (
+            <>
+                <Form input={filter} setInput={setFilter}/>
+                <ul>
+                    { found.map(country => <li key={country.name.common}>
+                        {country.name.common}
+                        <button onClick={() => setFilter(country.name.common)}>show</button>
+                        </li>
+                    )}
+                </ul>
+            </>
+        )
+
+    if (found.length === 1)
+        return (
+            <>
+                <Form input={filter} setInput={setFilter}/>
+                <Country country={found[0]} />
+            </>
+        )
+
     return (
         <>
-        <label>
-            find countries
-            <input id='country' type='text' onChange={e => setFilter(e.target.value)} value={filter}/>
-        </label>
-        <Info countries={countries} country={filter} setCountry={setFilter} />
+            <Form input={filter} setInput={setFilter}/>
         </>
     )
 }
 
-const Info = ({ country, countries, setCountry }) => {
-    if (country.length === 0 || countries.length === 0) return null
+const Form = ({ input, setInput }) => (
+    <label>
+        find countries
+        <input type='text' onChange={e => setInput(e.target.value)} value={input}/>
+    </label>
+)
 
-    const search = country[0].toUpperCase() + country.substring(1)
-    const found = countries.filter(c => c.name.common.startsWith(search))
+const Country = ({ country }) => {
+    const name = country.name.common
+    const capital = country.capital[0]
+    const area = country.area
+    const languages = Object.values(country.languages)
+    const image = country.flags.png
 
-    if (found.length > 10)
-        return <p>Too many matches, specify another filter</p>
-    if (found.length > 1)
-        return (
-            <ul>
-                { found.map(c =>
-                    <li key={c.name.common}>
-                        {c.name.common}
-                        <button onClick={() => setCountry(c.name.common)}>show</button>
-                    </li>) 
-                }
-            </ul>
-        )
-    if (found.length === 1) {
-        const name = found[0].name.common
-        const capital = found[0].capital[0]
-        const area = found[0].area
-        const languages = Object.values(found[0].languages)
-        const image = found[0].flags.png
 
-        return (
-            <>
+    return (
+        <>
             <h2>{name}</h2>
             capital {capital} <br/>
             area {area}
             <h3>languages:</h3>
-                <ul>
-                    { languages.map(l => <li key={l}>{l}</li>) }
-                </ul>
+            <ul>
+                { languages.map(l => <li key={l}>{l}</li>) }
+            </ul>
             <img src={image} alt='country flag'/>
-            </>
-        )
-    }
-    
-    return null
+
+            <Weather country={country} />
+        </>
+    )
 }
-        
+
+const Weather = ({ country }) => {
+    const api_key = process.env.REACT_APP_API_KEY
+    const [lat, lon] = country.capitalInfo.latlng
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
+
+    const [weather, setWeather] = useState(null)
+
+    useEffect(() => {
+        axios
+            .get(url)
+            .then(response => setWeather(response.data))
+    }, [])
+
+    if (weather === null) return null
+
+    const iconSrc = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+
+    return (
+        <>
+            <h2>Weather in {country.capital[0]}</h2>
+            temperature {weather.main.temp} celsius <br />
+            <img src={iconSrc} alt='weather icon'/> <br />
+            wind {weather.wind.speed} m/s
+        </>
+    )
+}
 
 export default App;
