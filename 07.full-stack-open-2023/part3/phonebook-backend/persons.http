@@ -7,3 +7,28 @@ Content-Type: application/json
     "name": "makz",
     "number": "39-23-6423122"
 }
+
+# missing name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "39-23-6423122"
+}
+
+# missing number
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "makz"
+}
+
+# already exists
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Arto Hellas",
+    "number": "040-123456"
+}
