@@ -66,20 +66,15 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const person = req.body
-    person.id = Math.floor(Math.random() * 99999)
+    const { name, number } = req.body
 
-    // The name or number is missing
-    if (!person.name || !person.number)
+    if (!name || !number)
         return res.status(400).json({ error: 'name or number missing' })
 
-    // The name already exists in the phonebook
-    if (persons.find(p => p.name === person.name))
-        return res.status(400).json({ error: 'name must be unique' })
+    const newPerson = new Person({ name, number})
 
-    persons = [...persons, person]
-
-    res.status(201).json(person)
+    newPerson.save()
+    .then(savedPerson => res.status(201).json(savedPerson))
 })
 
 const PORT = process.env.PORT
