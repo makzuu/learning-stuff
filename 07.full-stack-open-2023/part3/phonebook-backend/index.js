@@ -42,21 +42,23 @@ app.get('/api/persons', (req, res, next) => {
         .catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
     const date = new Date()
-    const response = `Phonebook has info for ${persons.length} people<br/>${date}`
 
-    res.send(response)
+    Person.find({})
+    .then(persons => res.send(`Phonebook has info for ${persons.length} people</br>${date}`))
+    .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person)
-        return res.json(person)
-
-    res.status(404).end()
+app.get('/api/persons/:id', (req, res, next) => {
+    const id = req.params.id
+    Person.findById(id)
+        .then(person => {
+            if (person)
+                return res.json(person)
+            res.status(404).end()
+        }) 
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
