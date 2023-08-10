@@ -1,0 +1,11 @@
+GET http://localhost:3003/api/blogs
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "I'm 17 and wrote this guide on how CPUs run programs",
+    "author": "kognise",
+    "url": "https://github.com/hackclub/putting-the-you-in-cpu",
+    "likes": 10
+}
