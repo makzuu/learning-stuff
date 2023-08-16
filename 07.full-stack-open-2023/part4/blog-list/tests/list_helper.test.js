@@ -1,4 +1,4 @@
-const listHelper = require('../utils/list_helper.js')
+const listHelper = require('../utils/list_helper')
 
 const blogs = [
     {
@@ -90,6 +90,19 @@ describe('favorite blog', () => {
             title: "Canonical string reduction",
             author: "Edsger W. Dijkstra",
             likes: 12
+        })
+    })
+})
+
+describe('most blogs', () => {
+    test('of a empty list is null', () => {
+        expect(listHelper.mostBlogs([])).toBe(null)
+    })
+
+    test('of a bigger list is calculated right', () => {
+        expect(listHelper.mostBlogs(blogs)).toEqual({
+            author: "Robert C. Martin",
+            blogs: 3
         })
     })
 })

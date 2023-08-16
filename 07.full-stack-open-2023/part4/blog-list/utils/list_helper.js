@@ -2,7 +2,7 @@ const dummy = blogs => 1
 
 const totalLikes = blogs => blogs.reduce((acc, el) => acc + el.likes, 0)
 
-const favoriteBlog = blogs =>
+const favoriteBlog = blogs => (
     blogs
         .map(({ title, author, likes }) => ({ title, author, likes }))
         .reduce((favorite, blog) => {
@@ -12,5 +12,35 @@ const favoriteBlog = blogs =>
                 return blog
             return favorite
         }, null)
+)
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+// TODO: use lodash to do this more compact and readable
+// or just write better code xd
+const mostBlogs = blogs => {
+    if (blogs.length === 0) return null
+
+    const mostBlogs = { author: '', blogs: 0 }
+    const authors = {}
+
+    blogs.forEach(({ author }) => {
+        if (authors[author] === undefined)
+            authors[author] = 1
+        else authors[author]++
+    })
+
+    for (const author in authors) {
+        if (mostBlogs.author === '') {
+            mostBlogs.author = author
+            mostBlogs.blogs = authors[author]
+        } else {
+            if (authors[author] > mostBlogs.blogs) {
+                mostBlogs.author = author
+                mostBlogs.blogs = authors[author]
+            }
+        }
+    }
+
+    return mostBlogs
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
