@@ -19,28 +19,23 @@ const favoriteBlog = blogs => (
 const mostBlogs = blogs => {
     if (blogs.length === 0) return null
 
-    const mostBlogs = { author: '', blogs: 0 }
-    const authors = {}
+    const seenAuthors = []
 
-    blogs.forEach(({ author }) => {
-        if (authors[author] === undefined)
-            authors[author] = 1
-        else authors[author]++
-    })
-
-    for (const author in authors) {
-        if (mostBlogs.author === '') {
-            mostBlogs.author = author
-            mostBlogs.blogs = authors[author]
-        } else {
-            if (authors[author] > mostBlogs.blogs) {
-                mostBlogs.author = author
-                mostBlogs.blogs = authors[author]
+    return blogs
+        .map(({ author }) => ({ author, blogs: 1 }))
+        .filter((author, index, authors) => {
+            if (seenAuthors.includes(author.author)) {
+                const target = authors.find(ael => ael.author === author.author)
+                target.blogs++
+                return false
             }
-        }
-    }
-
-    return mostBlogs
+            seenAuthors.push(author.author)
+            return true
+        }).reduce((mostBlogs, author) => {
+            if (author.blogs > mostBlogs.blogs)
+                return author
+            return mostBlogs
+        })
 }
 
 module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
