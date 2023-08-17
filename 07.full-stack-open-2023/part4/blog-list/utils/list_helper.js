@@ -38,4 +38,27 @@ const mostBlogs = blogs => {
         })
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = blogs => {
+    if (blogs.length === 0) return null
+
+    const seenAuthors = []
+
+    return blogs
+        .map(({ author, likes }) => ({ author, likes }))
+        .filter((author, index, authors) => {
+            if (seenAuthors.includes(author.author)) {
+                const target = authors.find(ael => ael.author === author.author)
+                target.likes += author.likes
+                return false
+            }
+            seenAuthors.push(author.author)
+            return true
+        })
+        .reduce((mostLikes, author) => {
+            if (author.likes > mostLikes.likes)
+                return author
+            return mostLikes
+        })
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
