@@ -31,6 +31,22 @@ test('the blog unique identifier is named id, not _id', async () => {
     expect(response.body[0]._id).not.toBeDefined()
 })
 
+test('a new blog can be added', async () => {
+    const newBlog = helper.blogs[0]
+
+    const response = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsInDb = await helper.blogsInDb()
+
+    expect(blogsInDb).toHaveLength(helper.blogs.length + 1)
+    delete response.body.id
+    expect(response.body).toEqual(newBlog)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
