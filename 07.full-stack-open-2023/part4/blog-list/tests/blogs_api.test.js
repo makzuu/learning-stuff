@@ -59,6 +59,24 @@ test('blog\'s likes property defaults to 0', async () => {
     expect(response.body.likes).toBe(0)
 })
 
+test('blog\'s title property is required', async () => {
+    const blogWithoutTitle = helper.blogWithoutTitle
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutTitle)
+        .expect(400)
+})
+
+test('blog\'s url property is required', async () => {
+    const blogWithoutUrl = helper.blogWithoutUrl
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutUrl)
+        .expect(400)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
