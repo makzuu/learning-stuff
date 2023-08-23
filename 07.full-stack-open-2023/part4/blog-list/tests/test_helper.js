@@ -39,6 +39,12 @@ const blogs = [
     }
 ]
 
+const blogWithoutLikes = {
+    title: "Type wars",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+}
+
 const nonExistingId = async () => {
     const blog = await new Blog(blog[0]).save()
     Blog.deleteOne()
@@ -52,4 +58,4 @@ const blogsInDb = async () => {
     return blogs.map(blog => blog.toJSON())
 }
 
-module.exports = { blogs, nonExistingId, blogsInDb }
+module.exports = { blogs, nonExistingId, blogsInDb, blogWithoutLikes }
