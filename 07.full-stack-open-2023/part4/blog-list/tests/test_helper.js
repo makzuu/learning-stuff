@@ -58,10 +58,10 @@ const blogWithoutUrl = {
 }
 
 const nonExistingId = async () => {
-    const blog = await new Blog(blog[0]).save()
-    Blog.deleteOne()
+    const id = await new Blog(blogs[0]).save()
+    await Blog.findByIdAndRemove(id)
 
-    return blog._id.toString()
+    return id
 }
 
 const blogsInDb = async () => {

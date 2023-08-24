@@ -77,6 +77,37 @@ test('blog\'s url property is required', async () => {
         .expect(400)
 })
 
+describe('deletion of a blog', () => {
+    test('succeeds with status 204 if id is valid', async () => {
+        const blogsInDb = await helper.blogsInDb()
+        const blogToRemove = blogsInDb[0]
+
+        await api
+            .delete(`/api/blogs/${blogToRemove.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.blogs.length - 1)
+
+        const blog_titles = blogsAtEnd.map(b => b.title)
+
+        expect(blog_titles).not.toContain(blogToRemove.title)
+    })
+
+    test('fails with status 400 if id is invalid', async () => {
+        const invalidId = await helper.nonExistingId()
+
+        await api
+            .delete(`/api/blogs/${invalidId}`)
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.blogs.length)
+    })
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
