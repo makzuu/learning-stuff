@@ -108,6 +108,21 @@ describe('deletion of a blog', () => {
     })
 })
 
+test('blog\'s likes property may be updated', async () => {
+    const blogsInDb = await helper.blogsInDb()
+    const blog = blogsInDb[0]
+
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+
+    const response = await api
+        .put(`/api/blogs/${blog.id}`)
+        .send(updatedBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    expect(response.body.likes).toBe(blog.likes + 1)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
