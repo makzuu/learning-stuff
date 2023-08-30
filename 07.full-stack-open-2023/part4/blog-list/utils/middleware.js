@@ -10,7 +10,8 @@ const logs = (req, res, next) => {
 const unknownEndpoint = (req, res) => res.status(400).json({ error: 'unknown endpoint' })
 
 const errorHandler = (error, req, res, next) => {
-    logger.error(error.message)
+    logger.error("error handle - error message: ", error.message)
+    logger.error("error handle - error name: ", error.name)
 
     if (error.name === 'CastError')
         return res.status(400).json({ error: 'malformatted id' })
