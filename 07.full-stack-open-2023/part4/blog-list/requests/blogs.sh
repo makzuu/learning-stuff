@@ -17,6 +17,11 @@ token='Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpI
 #    -d  "$blog" \
 #   # | jq
 
+#curl -X DELETE \
+#	$url/64f4d0d77010d2b2fdc0588a \
+#	-H 'Authorization':"$token" \
+#	| jq
+
 curl -X GET \
 	$url \
 	| jq
