@@ -5,7 +5,8 @@ blog='{"title":"Im 17 and wrote this guide on how CPUs run programs","author":"k
 
 #curl -X POST \
 #    $url \
-#    -H Content-Type:application/json \
+#    -H 'Content-Type':'application/json' \
+#    -H 'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGYzY2IwOWQzYjkyN2RlN2MyODc5YzgiLCJpYXQiOjE2OTM3NjU2MzR9.PoV7mjex0NhWsuZLGVrk8k7eK7s8gALyznvg7iaVZwM' \
 #    -d  "$blog" \
 #    | jq
 
