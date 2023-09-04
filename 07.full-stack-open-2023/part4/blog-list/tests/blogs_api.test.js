@@ -3,16 +3,40 @@ const supertest = require('supertest')
 const app = require('../app')
 
 const api = supertest(app)
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const helper = require('./test_helper')
 
+const user = { username: 'makz', name: 'makz mann', password: '1234' }
+
+const getToken = async () => {
+    const userForToken = {
+        username: user.username,
+        id: user._id
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET)
+
+    return 'Bearer ' + token
+}
+
 beforeEach(async () => {
     await Blog.deleteMany()
+    await User.deleteMany()
 
-    const blogs = helper.blogs.map(blog => new Blog(blog))
-    const promises = blogs.map(blog => blog.save())
-    await Promise.all(promises)
+    const saltRounds = 10
+    user.passwordHash = await bcrypt.hash(user.password, saltRounds)
+    const savedUser = await new User(user).save()
+
+    user._id = savedUser._id
+
+    helper.blogs.forEach(blog => blog.user = savedUser._id);
+
+    await Blog.insertMany(helper.blogs)
 })
 
 test('all blogs are returned as json', async () => {
@@ -32,10 +56,18 @@ test('the blog unique identifier is named id, not _id', async () => {
 })
 
 test('a new blog can be added', async () => {
-    const newBlog = helper.blogs[0]
+    const newBlog = {
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+    }
+
+    const token = await getToken()
 
     const response = await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -43,15 +75,17 @@ test('a new blog can be added', async () => {
     const blogsInDb = await helper.blogsInDb()
 
     expect(blogsInDb).toHaveLength(helper.blogs.length + 1)
-    delete response.body.id
-    expect(response.body).toEqual(newBlog)
+    expect(response.body.title).toEqual(newBlog.title)
 })
 
 test('blog\'s likes property defaults to 0', async () => {
     const blogWithoutLikes = helper.blogWithoutLikes
 
+    const token = await getToken()
+
     const response = await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(blogWithoutLikes)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -62,8 +96,11 @@ test('blog\'s likes property defaults to 0', async () => {
 test('blog\'s title property is required', async () => {
     const blogWithoutTitle = helper.blogWithoutTitle
 
+    const token = await getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(blogWithoutTitle)
         .expect(400)
 })
@@ -71,8 +108,11 @@ test('blog\'s title property is required', async () => {
 test('blog\'s url property is required', async () => {
     const blogWithoutUrl = helper.blogWithoutUrl
 
+    const token = await getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(blogWithoutUrl)
         .expect(400)
 })
@@ -82,8 +122,11 @@ describe('deletion of a blog', () => {
         const blogsInDb = await helper.blogsInDb()
         const blogToRemove = blogsInDb[0]
 
+        const token = await getToken()
+
         await api
             .delete(`/api/blogs/${blogToRemove.id}`)
+            .set('Authorization', token)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -98,8 +141,11 @@ describe('deletion of a blog', () => {
     test('fails with status 400 if id is invalid', async () => {
         const invalidId = await helper.nonExistingId()
 
+        const token = await getToken()
+
         await api
             .delete(`/api/blogs/${invalidId}`)
+            .set('Authorization', token)
             .expect(400)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -121,6 +167,25 @@ test('blog\'s likes property may be updated', async () => {
         .expect('Content-Type', /application\/json/)
 
     expect(response.body.likes).toBe(blog.likes + 1)
+})
+
+test('adding a blog fails with status 401 Unauthorized when no token is provided', async () => {
+    const newBlog = {
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsInDb = await helper.blogsInDb()
+
+    expect(blogsInDb).toHaveLength(helper.blogs.length)
 })
 
 afterAll(async () => {
