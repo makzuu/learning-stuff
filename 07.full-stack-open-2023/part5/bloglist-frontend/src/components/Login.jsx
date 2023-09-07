@@ -1,7 +1,6 @@
 const Login = ({ username, password, handleUsername, handlePassword, login }) => {
   return (
   <>
-      <h1>log in to application</h1>
       <form onSubmit={login}>
         <div>
           username:
