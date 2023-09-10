@@ -23,9 +23,11 @@ const App = () => {
   const togglableRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    const fetchData = async () => {
+      const response = await blogService.getAll()
+      setBlogs(response)
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -65,6 +67,7 @@ const App = () => {
   const newBlog = async (blog) => {
     try {
       const newBlog = await blogService.create(blog)
+      newBlog.user = { name: user.name, username: user.username }
       setBlogs([...blogs, newBlog])
       setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       togglableRef.current.toggleVisible()
