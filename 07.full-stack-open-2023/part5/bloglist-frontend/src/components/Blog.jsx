@@ -1,9 +1,16 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, like }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisible = () => setVisible(!visible)
+
+  const updateLikes = async () => {
+    const newBlog = {...blog}
+    newBlog.user = newBlog.user.id
+    newBlog.likes++
+    await like(newBlog)
+  }
 
   const blogStyle = {
     border: '1px solid black',
@@ -23,7 +30,7 @@ const Blog = ({ blog }) => {
         </div>
         <div>
           {blog.likes}
-          <button>like</button>
+          <button onClick={updateLikes}>like</button>
         </div>
         <div>
           {blog.user.name}

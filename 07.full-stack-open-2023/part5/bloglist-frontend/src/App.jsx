@@ -23,10 +23,6 @@ const App = () => {
   const togglableRef = useRef()
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await blogService.getAll()
-      setBlogs(response)
-    }
     fetchData()
   }, [])
 
@@ -38,6 +34,11 @@ const App = () => {
       blogService.setToken(userObject.token)
     }
   }, [])
+
+  const fetchData = async () => {
+    const response = await blogService.getAll()
+    setBlogs(response)
+  }
 
   const login = async (e) => {
     e.preventDefault()
@@ -68,12 +69,21 @@ const App = () => {
     try {
       const newBlog = await blogService.create(blog)
       newBlog.user = { name: user.name, username: user.username }
-      setBlogs([...blogs, newBlog])
+      fetchData()
       setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       togglableRef.current.toggleVisible()
       setTimeout(() => {
         setNotification(null)
       }, 5000);
+    } catch (error) {
+      console.error(error.response.data.error)
+    }
+  }
+
+  const updateLikes = async (updatedBlog) => {
+    try {
+      await blogService.update(updatedBlog)
+      await fetchData()
     } catch (error) {
       console.error(error.response.data.error)
     }
@@ -101,7 +111,7 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={togglableRef}>
         <BlogForm create={newBlog}/>
       </Togglable>
-      <Blogs blogs={blogs}/>
+      <Blogs blogs={blogs} like={updateLikes}/>
     </div>
   )
 }
