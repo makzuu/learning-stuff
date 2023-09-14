@@ -1,15 +1,22 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, like }) => {
+const Blog = ({ blog, funcs, user }) => {
   const [visible, setVisible] = useState(false)
 
+  const showRemoveButton = user && user.username === blog.user.username
   const toggleVisible = () => setVisible(!visible)
 
   const updateLikes = async () => {
-    const newBlog = {...blog}
-    newBlog.user = newBlog.user.id
-    newBlog.likes++
-    await like(newBlog)
+    const updatedBlog = {...blog}
+    updatedBlog.user = updatedBlog.user.id
+    updatedBlog.likes++
+    await funcs.updateBlog(updatedBlog)
+  }
+
+  const remove = () => {
+    if (confirm(`remove blog ${blog.title} by ${blog.author}`)) {
+      funcs.removeBlog(blog.id)
+    }
   }
 
   const blogStyle = {
@@ -34,6 +41,15 @@ const Blog = ({ blog, like }) => {
         </div>
         <div>
           {blog.user.name}
+        </div>
+        <div>
+          { showRemoveButton &&
+            <button
+              onClick={remove}
+            >
+              remove
+            </button>
+          }
         </div>
       </div>
     )

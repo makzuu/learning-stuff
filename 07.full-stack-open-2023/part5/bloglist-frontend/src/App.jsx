@@ -91,10 +91,19 @@ const App = () => {
     }
   }
 
-  const updateLikes = async (updatedBlog) => {
+  const updateBlog = async (updatedBlog) => {
     try {
       await blogService.update(updatedBlog)
       await fetchData()
+    } catch (error) {
+      console.error(error.response.data.error)
+    }
+  }
+
+  const removeBlog = async id => {
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(b => b.id.toString() !== id.toString()))
     } catch (error) {
       console.error(error.response.data.error)
     }
@@ -122,7 +131,7 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={togglableRef}>
         <BlogForm create={newBlog}/>
       </Togglable>
-      <Blogs blogs={blogs} like={updateLikes}/>
+      <Blogs blogs={blogs} funcs={{ updateBlog, removeBlog }} user={user}/>
     </div>
   )
 }
