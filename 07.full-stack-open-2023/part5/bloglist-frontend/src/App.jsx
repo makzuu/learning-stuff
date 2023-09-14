@@ -36,8 +36,19 @@ const App = () => {
   }, [])
 
   const fetchData = async () => {
-    const response = await blogService.getAll()
-    setBlogs(response)
+    try {
+      const response = await blogService.getAll()
+      setBlogs(response.sort((a, b) => {
+        if (a.likes > b.likes) {
+          return -1
+        } else if (a.likes < b.likes) {
+          return 1
+        }
+        return 0
+      }))
+    } catch (error) {
+      console.error(error.response.data.error)
+    }
   }
 
   const login = async (e) => {
@@ -69,7 +80,7 @@ const App = () => {
     try {
       const newBlog = await blogService.create(blog)
       newBlog.user = { name: user.name, username: user.username }
-      fetchData()
+      await fetchData()
       setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       togglableRef.current.toggleVisible()
       setTimeout(() => {
