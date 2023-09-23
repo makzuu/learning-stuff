@@ -27,3 +27,4 @@
 [forwardRef](https://react.dev/reference/react/forwardRef)
 [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle)
 [Manipulating the DOM with Refs](https://react.dev/learn/manipulating-the-dom-with-refs)
+[prop-types](https://github.com/facebook/prop-types)
