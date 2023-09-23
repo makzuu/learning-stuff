@@ -13,127 +13,128 @@ import loginService from './services/login'
 import './index.css'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState(null)
-  const [error, setError] = useState(null)
+    const [blogs, setBlogs] = useState([])
+    const [user, setUser] = useState(null)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [notification, setNotification] = useState(null)
+    const [error, setError] = useState(null)
 
-  const togglableRef = useRef()
+    const togglableRef = useRef()
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+    useEffect(() => {
+        fetchData()
+    }, [])
 
-  useEffect(() => {
-    const userInfo = window.localStorage.getItem('userInfo')
-    if (userInfo) {
-      const userObject = JSON.parse(userInfo)
-      setUser(userObject)
-      blogService.setToken(userObject.token)
-    }
-  }, [])
-
-  const fetchData = async () => {
-    try {
-      const response = await blogService.getAll()
-      setBlogs(response.sort((a, b) => {
-        if (a.likes > b.likes) {
-          return -1
-        } else if (a.likes < b.likes) {
-          return 1
+    useEffect(() => {
+        const userInfo = window.localStorage.getItem('userInfo')
+        if (userInfo) {
+            const userObject = JSON.parse(userInfo)
+            setUser(userObject)
+            blogService.setToken(userObject.token)
         }
-        return 0
-      }))
-    } catch (error) {
-      console.error(error.response.data.error)
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            const response = await blogService.getAll()
+            setBlogs(response.sort((a, b) => {
+                if (a.likes > b.likes) {
+                    return -1
+                } else if (a.likes < b.likes) {
+                    return 1
+                }
+                return 0
+            }))
+        } catch (error) {
+            console.error(error.response.data.error)
+        }
     }
-  }
 
-  const login = async (e) => {
-    e.preventDefault()
+    const login = async (e) => {
+        e.preventDefault()
 
-    try {
-      const user = await loginService.login({ username, password })
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      window.localStorage.setItem('userInfo', JSON.stringify(user))
-      blogService.setToken(user.token)
-    } catch (error) {
-      console.error(error.response.data.error)
-      setError('wrong username or password')
-      setTimeout(() => {
-        setError(null)
-      }, 5000);
+        try {
+            const user = await loginService.login({ username, password })
+            setUser(user)
+            setUsername('')
+            setPassword('')
+            window.localStorage.setItem('userInfo', JSON.stringify(user))
+            blogService.setToken(user.token)
+        } catch (error) {
+            console.error(error.response.data.error)
+            setError('wrong username or password')
+            setTimeout(() => {
+                setError(null)
+            }, 5000)
+        }
     }
-  }
 
-  const logout = () => {
-    setUser(null)
-    window.localStorage.removeItem('userInfo')
-    blogService.setToken(null)
-  }
-
-  const newBlog = async (blog) => {
-    try {
-      const newBlog = await blogService.create(blog)
-      newBlog.user = { name: user.name, username: user.username }
-      await fetchData()
-      setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-      togglableRef.current.toggleVisible()
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000);
-    } catch (error) {
-      console.error(error.response.data.error)
+    const logout = () => {
+        setUser(null)
+        window.localStorage.removeItem('userInfo')
+        blogService.setToken(null)
     }
-  }
 
-  const updateBlog = async (updatedBlog) => {
-    try {
-      await blogService.update(updatedBlog)
-      await fetchData()
-    } catch (error) {
-      console.error(error.response.data.error)
+    const newBlog = async (blog) => {
+        try {
+            const newBlog = await blogService.create(blog)
+            newBlog.user = { name: user.name, username: user.username }
+            await fetchData()
+            setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+            togglableRef.current.toggleVisible()
+            setTimeout(() => {
+                setNotification(null)
+            }, 5000)
+        } catch (error) {
+            console.error(error.response.data.error)
+        }
     }
-  }
 
-  const removeBlog = async id => {
-    try {
-      await blogService.remove(id)
-      setBlogs(blogs.filter(b => b.id.toString() !== id.toString()))
-    } catch (error) {
-      console.error(error.response.data.error)
+    const updateBlog = async (updatedBlog) => {
+        try {
+            await blogService.update(updatedBlog)
+            await fetchData()
+        } catch (error) {
+            console.error(error.response.data.error)
+        }
     }
-  }
 
-  if (!user) {
+    const removeBlog = async id => {
+        try {
+            await blogService.remove(id)
+            setBlogs(blogs.filter(b => b.id.toString() !== id.toString()))
+        } catch (error) {
+            console.error(error.response.data.error)
+        }
+    }
+
+    if (!user) {
+        return (
+            <div>
+                <h1>log in to application</h1>
+                { error && <Error error={error}/> }
+                <Login username={username} password={password}
+                    handleUsername={(e) => {setUsername(e.target.value)}}
+                    handlePassword={(e) => {setPassword(e.target.value)}}
+                    login={login}
+                />
+            </div>
+        )
+    }
+
     return (
-      <div>
-        <h1>log in to application</h1>
-        { error && <Error error={error}/> }
-        <Login username={username} password={password} 
-          handleUsername={(e) => {setUsername(e.target.value)}} 
-          handlePassword={(e) => {setPassword(e.target.value)}} 
-          login={login} />
-      </div>
+        <div>
+            <h2>blogs</h2>
+            { notification && <Notification message={notification}/> }
+            {user.name} logged in <button onClick={logout}>log out</button>
+            <h2>create new</h2>
+            <Togglable buttonLabel='new blog' ref={togglableRef}>
+                <BlogForm create={newBlog}/>
+            </Togglable>
+            <Blogs blogs={blogs} funcs={{ updateBlog, removeBlog }} user={user}/>
+        </div>
     )
-  }
-
-  return (
-    <div>
-      <h2>blogs</h2>
-      { notification && <Notification message={notification}/> }
-      {user.name} logged in <button onClick={logout}>log out</button>
-      <h2>create new</h2>
-      <Togglable buttonLabel='new blog' ref={togglableRef}>
-        <BlogForm create={newBlog}/>
-      </Togglable>
-      <Blogs blogs={blogs} funcs={{ updateBlog, removeBlog }} user={user}/>
-    </div>
-  )
 }
 
 export default App
