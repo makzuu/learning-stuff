@@ -45,13 +45,13 @@ main:
 
 	decq %rcx
 
-	leaq ALLOCATED_MEM_ADDR(%rbp), %rdi
+	movq ALLOCATED_MEM_ADDR(%rbp), %rdi
 	movq $'a', %rsi
 	movq %rcx, %rdx
 	call memset
 
 	# put a nul character at the end
-	leaq ALLOCATED_MEM_ADDR(%rbp), %rax
+	movq ALLOCATED_MEM_ADDR(%rbp), %rax
 	movq num_requested_bytes, %rcx
 	decq %rcx
 	addq %rcx, %rax
@@ -60,9 +60,12 @@ main:
 
 	# print string
 	movq stdout, %rdi
-	leaq ALLOCATED_MEM_ADDR(%rbp), %rsi
+	movq ALLOCATED_MEM_ADDR(%rbp), %rsi
 	movq $0, %rax
 	call fprintf
+
+	movq ALLOCATED_MEM_ADDR(%rbp), %rdi
+	call deallocate
 
 	leave
 	movq $0, %rax
