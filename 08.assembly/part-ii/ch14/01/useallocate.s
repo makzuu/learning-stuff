@@ -5,6 +5,8 @@ prompt:
 	.asciz "how many bytes would you like to allocate: "
 scanformat:
 	.asciz "%d"
+outputformat:
+	.asciz "address: %p\nvalue: %s\n"
 err_01text:
 	.asciz "<bytes> most be greater than 0\n"
 
@@ -60,7 +62,9 @@ main:
 
 	# print string
 	movq stdout, %rdi
-	movq ALLOCATED_MEM_ADDR(%rbp), %rsi
+	movq $outputformat, %rsi
+	movq ALLOCATED_MEM_ADDR(%rbp), %rdx
+	movq ALLOCATED_MEM_ADDR(%rbp), %rcx
 	movq $0, %rax
 	call fprintf
 
