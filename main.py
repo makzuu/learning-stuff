@@ -24,6 +24,9 @@ def main():
                 print("noh vimo!")
                 return
         # input end
+        # update
+        player.update(dt)
+        # update end
         # draw
         window_surface.fill("black")
         player.draw(window_surface)
